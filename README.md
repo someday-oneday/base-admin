@@ -9,8 +9,6 @@ Base Admin城市垃圾分类回收管理系统（毕设）<br/>
 前端：layui<br/> 
 java后端：SpringBoot + Thymeleaf + WebSocket + Spring Security + SpringData-Jpa + MySql<br/> 
 
-## 运行效果图<br/> 
-![](https://huanzi-qch.gitee.io/file-server/images/base-admin.png) 
 
 ## 仓库地址<br/> 
 国外：https://github.com/huanzi-qch/base-admin<br/> 
@@ -101,21 +99,5 @@ GitHub地址：https://github.com/huanzi-qch/fast-scaffold
 package pom.xml文件的同级目录下面的package
 
 ```
-## [AD广告位](https://huanzi-qch.gitee.io/file-server/ad/adservice.html) （长期招租，如有需要请私信）<br/> 
-[【基塔后台】免费后台管理系统，低代码快速搭建管理后台](https://www.jeata.com/?hmsr=promotion&hmpl=huanzi-qch) <br/>
-<br/>
-[【阿里云】阿里云最全的优惠活动聚集地！](https://www.aliyun.com/activity?userCode=ckkryd9h) <br/>
-[【腾讯云】腾讯云当前最新优惠活动专区！](https://cloud.tencent.com/act/cps/redirect?redirect=11447&cps_key=e1c9db729edccd479fc902634492bf53) <br/>
-<br/>
 
-## QQ群<br/>
-有事请加群，有问题进群大家一起交流！<br/>
-![](https://huanzi-qch.gitee.io/file-server/images/qq.png) 
-
-## 捐献<br/>
-相应的资金支持能更好的持续项目的维护和开发，如果喜欢这个项目，请随意打赏！
-
-| 支付宝 | 微信 |
-|  ----  | ----  |
-| <img src="http://huanzi-qch.gitee.io/file-server/images/zhifubao.png"  width="150"> | <img src="http://huanzi-qch.gitee.io/file-server/images/weixin.png" width="150"> |
 
