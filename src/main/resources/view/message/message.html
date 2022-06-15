@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+.border1{
+    width: 60%;
+    margin: auto;
+    padding: 15px 0px;
+    border-bottom: 1px solid #DDDDDD;
+}
+.border1:hover{
+    background-color: aliceblue;
+}
+.date{
+    display: inline-block;
+    padding: 5px 0px;
+    color: #666666;
+}
+.username{
+    display: inline-block;
+    font-size: 15px;
+}
+.date1{
+    display: inline-block;
+    font-size: 15px;
+    padding: 0px 20px;
+}
+.title{
+    font-size: 20px;
+    padding: 5px 0px;
+    color: #444444;
+}
+.form-group{
+    width: 60%;
+    margin: auto;
+    padding: 15px 0px;
+    border-bottom: 1px solid #DDDDDD;
+    font-size: 20px;
+}
+.label{
+    font-size: 23px;
+    font-weight: bolder;
+    color: #555555;
+}
+.form-control{
+    font-size: 17px;
+    width: 95%;
+    padding: 15px;
+    background-color: aliceblue;
+    border-radius: 10px;
+    border: #DDDDDD solid 1px;
+}
+.form-control:hover{
+    background-color: white;
+}
+.query{
+    margin-left: 650px;
+}
+</style>
+<body>
+<div id="main">
+    <div class="div_form">
+    <form id="form_message">
+        <div class="form-group">
+            <label class="label">写评论</label>
+            <button class="layui-btn layui-btn-sm query" onclick="comment()">发送<i class="layui-icon "></i></button>
+            <input name="mcontent" id="mContent" type="text" class="form-control" placeholder="写下您的评论....">
+        </div>
+        <input name="userName" hidden="hidden">
+    </form>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/message/message/js/message.js}"></script>
+</html>

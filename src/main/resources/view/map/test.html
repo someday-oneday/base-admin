@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        Array.prototype.remove = function(index) {
+            // if (index > -1) {
+            //     this.splice(index, 1);
+            // }
+            let newArray = [];
+            for(let i = 0 ; i < this.length ; i ++){
+                if(index != i){
+                    newArray.push(this[i]);
+                }
+            }
+            return newArray;
+        };
+
+
+        let pathPoints = [];
+        let sourcePoints = [[126.64192644119161,45.71140885807086],[126.65168626106595,45.727031696916676],[126.66327952248612,45.71753866928763],[126.65755650791257,45.72163913860326],[126.6613737673467,45.72033346988572]];
+        function planPath(start,points){
+            let nearest = 0;
+            for(let i = 0 ; i < points.length ; i ++ ){
+               if((calDistance(start,points[nearest]) - calDistance(start,points[i])) >= 0){
+                  nearest = i;
+                }
+            }
+            pathPoints.push(points[nearest]);
+            if(pathPoints.length == sourcePoints.length + 1){
+                return;
+            }else{
+                let nearest_points = points[nearest];
+                points = points.remove(nearest);
+                planPath(nearest_points,points);
+            }
+        }
+
+        function calDistance(p1,p2){
+
+            return Math.sqrt(Math.pow((p2[0]-p1[0]),2) + Math.pow((p2[1]-p1[1]),2) )
+        }
+        function test(start,points){
+            pathPoints.push(start);
+            planPath(start,points);
+        }
+        window.onload = function (){
+            test([126.65206606463556,45.7296614368536],sourcePoints);
+            console.log(pathPoints);
+        }
+    </script>
+</head>
+<body>
+1
+</body>
+</html>

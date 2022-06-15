@@ -38,4 +38,10 @@ public class SysUserVo extends PageCondition implements Serializable {
 
     private String newPassword;//修改密码时输入的新密码
 
+    private String companyId;//公司id
+
+    private String userSex;//用户性别
+
+    private String userTelephone;//用户电话
+
 }

@@ -13,35 +13,129 @@
         .layui-nav-bar{
             display: none;
         }
+        .layui-card-body-item-img{
+            width: 270px;
+            /*margin-left: 27px;*/
+            margin: 0px 14px;
+        }
+        .layui-card-body-item-img1{
+            width: 270px;
+            margin-top: 5px;
+        }
+        .layui-card-body{
+            display: inline-flex;
+        }
+        .layui-card-body-items-title{
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+.layui-card-body-items-title-content{
+    height: 72px;
+    padding: 10px;
+    background-color: whitesmoke;
+    /*margin: 0px 5px;*/
+    padding: 10px;
+    border-radius: 10px;
+}
+.layui-card-body-items{
+    /*background: -webkit-linear-gradient(45deg, rgba(255, 0, 0,.5), rgba( 255, 165, 0, 0.5),rgba(255, 255, 0,.5),rgba(0, 255, 0,.5),rgba(0, 127, 255,.5),rgba(0, 0, 255,.5),rgba(139, 0, 255,.5));*/
+/*padding: 5px;*/
+    margin: 5px;
+}
+.layui-card-body-items:hover{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.title1{
+    background-color: lightskyblue;
+}
+        .title2{
+            background-color: mediumaquamarine;
+        }
+        .title3{
+            background-color: tomato;
+        }
+        .title4{
+            background-color: orange;
+        }
+.title5{
+    background-color: darkgray;
+
+}
+        .item1{
+            background-color: aliceblue;
+        }
+        .item2{
+            background-color: honeydew;
+        }
+        .item3{
+            background-color: peachpuff;
+        }
+        .item4{
+            background-color: papayawhip;
+        }
+        .item5{
+            background-color: whitesmoke;
+        }
+        .layui-garbage-item{
+            width: 240px;
+            margin: 3px;
+        }
+        .layui-garbage-item:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+        .layui-garbage-item-title{
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .layui-garbage-item-content{
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .layui-logo{
+            width: 300px;
+            color: white;
+        }
+
     </style>
 </head>
 <body class="layui-layout-body">
     <div class="layui-layout layui-layout-admin">
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <div class="layui-header"  th:style="${' background-color:' + sys.sysColor + ' !important;'}">
-            <div class="layui-logo"><img th:src='${sys.sysLogo}' class="layui-nav-img"/> <span th:text="${sys.sysName}"></span></div>
-            <ul class="layui-nav layui-layout-left">
-                <!-- 动态读取加载用户快捷菜单 -->
-                <li class="layui-nav-item" th:each="menu,iterStat : ${shortcutMenuList}">
-                    <a th:text="${menu.shortcutMenuName}"
-                       th:data-url="${menu.shortcutMenuPath.indexOf('http') == -1 ? #request.getContextPath() + menu.shortcutMenuPath : menu.shortcutMenuPath}"
-                       th:data-id="${menu.shortcutMenuId}" class="huanzi-menu" href="javascript:;">XXX菜单</a>
-                    <dl class="layui-nav-child" th:if="${#lists.size(menu.children)} > 0">
-                        <th:block th:include="common/head::shortcutMenu(${menu.children})"></th:block>
-                    </dl>
-                </li>
-            </ul>
+            <div class="layui-logo" style="width: 300px;color: white"><img th:src='${sys.sysLogo}' class="layui-nav-img"/> <span th:text="${sys.sysName}"></span></div>
+<!--            <ul class="layui-nav layui-layout-left">-->
+<!--                &lt;!&ndash; 动态读取加载用户快捷菜单 &ndash;&gt;-->
+<!--                <li class="layui-nav-item" th:each="menu,iterStat : ${shortcutMenuList}">-->
+<!--                    <a th:text="${menu.shortcutMenuName}"-->
+<!--                       th:data-url="${menu.shortcutMenuPath.indexOf('http') == -1 ? #request.getContextPath() + menu.shortcutMenuPath : menu.shortcutMenuPath}"-->
+<!--                       th:data-id="${menu.shortcutMenuId}" class="huanzi-menu" href="javascript:;">XXX菜单</a>-->
+<!--                    <dl class="layui-nav-child" th:if="${#lists.size(menu.children)} > 0">-->
+<!--                        <th:block th:include="common/head::shortcutMenu(${menu.children})"></th:block>-->
+<!--                    </dl>-->
+<!--                </li>-->
+<!--            </ul>-->
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
                     <a href="javascript:;">
-                        <img src="https://avatar.gitee.com/uploads/0/5137900_huanzi-qch.png!avatar100?1562729811"
+<!--                        <img src="https://avatar.gitee.com/uploads/0/5137900_huanzi-qch.png!avatar100?1562729811"-->
+<!--                             class="layui-nav-img">-->
+                        <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg95.699pic.com%2Fxsj%2F0t%2Fui%2Fjb.jpg%21%2Ffw%2F700%2Fwatermark%2Furl%2FL3hzai93YXRlcl9kZXRhaWwyLnBuZw%2Falign%2Fsoutheast&refer=http%3A%2F%2Fimg95.699pic.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652873340&t=93032d7bd8ec5b8453f1afbc8f7b5890"
                              class="layui-nav-img">
                         <span th:text="${loginUser.userName}">XXX</span>
                     </a>
-                    <dl class="layui-nav-child">
-                        <dd><a class="huanzi-menu" th:data-url="${#request.getContextPath()} + '/user/userinfo'" data-id="userinfo" href="javascript:;">基本资料</a></dd>
-                        <dd><a class="huanzi-menu" th:data-url="${#request.getContextPath()} + '/user/shortcMenu'" data-id="shortcMenu" href="javascript:;">个性菜单</a></dd>
-                    </dl>
+<!--                    <dl class="layui-nav-child">-->
+<!--                        <dd><a class="huanzi-menu" th:data-url="${#request.getContextPath()} + '/user/userinfo'" data-id="userinfo" href="javascript:;">基本资料</a></dd>-->
+<!--                        <dd><a class="huanzi-menu" th:data-url="${#request.getContextPath()} + '/user/shortcMenu'" data-id="shortcMenu" href="javascript:;">个性菜单</a></dd>-->
+<!--                    </dl>-->
                 </li>
                 <li class="layui-nav-item"><a th:href="@{/logout}">退出</a></li>
             </ul>
@@ -80,17 +174,10 @@
                                 <div class="layui-card">
                                     <div class="layui-card-header">欢迎使用</div>
                                     <div class="layui-card-body">
-                                        欢迎你，<span th:text="${loginUser.userName}"></span>
-                                        <br/>
-                                        <br/>
-                                        <p>Base Admin是一套简单通用的后台管理系统，主要功能有：权限管理、菜单管理、用户管理，系统设置、实时日志，实时监控，API加密，以及登录用户修改密码、配置个性菜单等</p>
-                                        <br/>
-                                        <br/>
-                                        <p>作者：huanzi-qch</p>
-                                        <p>博客：https://www.cnblogs.com/huanzi-qch</p>
-                                        <p>github：https://github.com/huanzi-qch</p>
-                                        <p>gitee：https://gitee.com/huanzi-qch</p>
-                                        <p>QQ交流群：1015379123</p>
+                                        欢迎你，<span th:text="${loginUser.userName}"></span><br/>
+                                        <div class="layui-card-body-items">
+<!--                                        <img th:src="@{/image/recoverable.jpg}"/>-->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -102,38 +189,81 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md6">
-                                <div class="layui-card">
-                                    <div class="layui-card-header">AD广告位（长期招租，如有需要请私信）</div>
-                                    <div class="layui-card-body">
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=ckkryd9h&utm_source=ckkryd9h', '_blank')" title="AD广告！">【阿里云】新老用户同享，上云优化聚集地！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/activity?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】最新活动页，上新必买抢先知，劲爆优惠不错过！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/daily-act/ecs/activity_selection?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】轻量应用服务器2核2G 低至60元/年起！香港与海外服务器最低24元/月起！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/daily-act/ecs/care?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】ECS实例升级、续费，享低至 6.3折 限时折扣！</span><br/>
-                                        <br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1077&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】云产品限时秒杀，爆款1核2G云服务器，首年74元！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1068&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】境外1核2G服务器低至2折，半价续费券限量免费领取！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1063&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】星星海SA2云服务器，1核2G首年99元起，高性价比首选！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1060&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】中小企业福利专场，多款刚需产品，满足企业通用场景需求，云服务器2.5折起！</span><br/>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="layui-col-md12">
                                 <div class="layui-card">
-                                    <div class="layui-card-header">AD广告位（长期招租，如有需要请私信）</div>
+                                    <div class="layui-card-header">垃圾分类指南</div>
                                     <div class="layui-card-body">
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=ckkryd9h&utm_source=ckkryd9h', '_blank')" title="AD广告！">【阿里云】新老用户同享，上云优化聚集地！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/activity?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】最新活动页，上新必买抢先知，劲爆优惠不错过！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/daily-act/ecs/activity_selection?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】轻量应用服务器2核2G 低至60元/年起！香港与海外服务器最低24元/月起！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://www.aliyun.com/daily-act/ecs/care?userCode=ckkryd9h', '_blank')" title="AD广告！">【阿里云】ECS实例升级、续费，享低至 6.3折 限时折扣！</span><br/>
-                                        <br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1077&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】云产品限时秒杀，爆款1核2G云服务器，首年74元！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1068&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】境外1核2G服务器低至2折，半价续费券限量免费领取！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1063&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】星星海SA2云服务器，1核2G首年99元起，高性价比首选！</span><br/>
-                                        <span style='color: #4c4f8b;text-decoration:underline;cursor: pointer; ' onclick="window.open('https://cloud.tencent.com/act/cps/redirect?redirect=1060&cps_key=e1c9db729edccd479fc902634492bf53&from=console', '_blank')" title="AD广告！">【腾讯云】中小企业福利专场，多款刚需产品，满足企业通用场景需求，云服务器2.5折起！</span><br/>
+                                        <div class="layui-card-body-items ">
+                                            <div class="layui-card-body-items-title title1">可回收垃圾</div>
+<!--                                            <div class="layui-card-body-items-title">废纸、塑料、玻璃、金属和布料五大类</div>-->
+                                            <div class="layui-card-body-items-title-content">可回收物指可以再生循环的垃圾，本身或材质可再利用的纸类，硬纸板，玻璃，塑料，金属，纺织物等</div>
+                                            <img th:src="@{/image/recoverable1.jpg}" class="layui-card-body-item-img1"/>
+                                        </div>
+                                        <div class="layui-card-body-items">
+                                            <div class="layui-card-body-items-title title2">厨余垃圾</div>
+<!--                                            <div class="layui-card-body-items-title">废纸、塑料、玻璃、金属和布料五大类</div>-->
+                                            <div class="layui-card-body-items-title-content">厨余垃圾是指居民日常生活及食品加工、饮食服务等活动中产生的垃圾，包括丢弃不用的菜叶、剩菜、剩饭、果皮等</div>
+                                            <img th:src="@{/image/foodwaste.jpg}" class="layui-card-body-item-img"/>
+                                        </div>
+                                        <div class="layui-card-body-items">
+                                            <div class="layui-card-body-items-title title3">有害垃圾</div>
+<!--                                            <div class="layui-card-body-items-title">废纸、塑料、玻璃、金属和布料五大类</div>-->
+                                            <div class="layui-card-body-items-title-content">常见的有害垃圾包括废电池、废灯泡、废水银温度计、废油漆桶、过期药品等，有害有毒垃圾需特殊正确的方法安全处理</div>
+                                            <img th:src="@{/image/harmful.jpg}" class="layui-card-body-item-img"/>
+                                        </div>
+                                        <div class="layui-card-body-items">
+                                            <div class="layui-card-body-items-title title4">其他垃圾</div>
+<!--                                            <div class="layui-card-body-items-title">废纸、塑料、玻璃、金属和布料五大类</div>-->
+                                            <div class="layui-card-body-items-title-content">其他垃圾指危害较小，可是没有再次利用价值的垃圾，如建筑垃圾，生活垃圾等</div>
+                                            <img th:src="@{/image/other.jpg}" class="layui-card-body-item-img"/>
+                                        </div>
+                                        </div>
+                                </div>
+                            </div>
+
+
+                            <div class="layui-col-md12">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">回收品类</div>
+                                    <div class="layui-card-body">
+                                        <div class="layui-garbage-item item1">
+                                            <div class="layui-garbage-item-title title1">塑料</div>
+                                            <div class="layui-garbage-item-content">塑料瓶</div>
+                                            <div class="layui-garbage-item-content">杂塑料</div>
+                                        </div>
+                                        <div class="layui-garbage-item item2">
+                                            <div class="layui-garbage-item-title title2">纺织品</div>
+                                            <div class="layui-garbage-item-content">旧衣物</div>
+                                            <div class="layui-garbage-item-content">鞋子</div>
+                                        </div>
+                                        <div class="layui-garbage-item item3">
+                                            <div class="layui-garbage-item-title title3">纸类</div>
+                                            <div class="layui-garbage-item-content">纸板箱</div>
+                                            <div class="layui-garbage-item-content">花纸板</div>
+                                            <div class="layui-garbage-item-content">书本</div>
+                                        </div>
+                                        <div class="layui-garbage-item item4">
+                                            <div class="layui-garbage-item-title title4">金属</div>
+                                            <div class="layui-garbage-item-content">铁</div>
+                                            <div class="layui-garbage-item-content">铜</div>
+                                            <div class="layui-garbage-item-content">铝</div>
+                                            <div class="layui-garbage-item-content">易拉罐</div>
+                                            <div class="layui-garbage-item-content">不锈钢</div>
+                                        </div>
+                                        <div class="layui-garbage-item item5">
+                                            <div class="layui-garbage-item-title title5">生活垃圾</div>
+                                            <div class="layui-garbage-item-content">果壳</div>
+                                            <div class="layui-garbage-item-content">残枝落叶</div>
+                                            <div class="layui-garbage-item-content">剩菜剩饭</div>
+                                            <div class="layui-garbage-item-content">骨骼内脏</div>
+                                            <div class="layui-garbage-item-content">菜梗菜叶</div>
+                                            <div class="layui-garbage-item-content">果皮</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -151,13 +281,13 @@
 
         //获取api加密开关并存到sessionStorage
         sessionStorage.setItem('sysApiEncrypt', [[${sys.sysApiEncrypt}]]);
-
+window.loginName=[[${loginUser.loginName}]];
         //如果开启了检查密码复杂度且最近修改密码时间 > 90天则弹窗提示
         sessionStorage.setItem('sysCheckPwdEncrypt', [[${sys.sysCheckPwdEncrypt}]]);
         if("Y" === [[${sys.sysCheckPwdEncrypt}]] && new Date() - new Date([[${loginUser.lastChangePwdTime}]]) > 1000 * 60 * 60 * 24 * 90){
             layui.use(['layer'], function () {
                 let layer = layui.layer;
-                layer.alert("距离上次修改密码已经超过90天，为了您的账号安全请及时更新密码！");
+                // layer.alert("距离上次修改密码已经超过90天，为了您的账号安全请及时更新密码！");
             });
         }
 

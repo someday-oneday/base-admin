@@ -7,6 +7,12 @@
     <script th:replace="common/head::static"></script>
     <!-- 样式 -->
     <link th:href="@{/sys/user/css/user.css}" rel="stylesheet" type="text/css"/>
+    <!--    校验-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
 </head>
 <body>
 <div class="layui-row layui-col-space15">
@@ -21,9 +27,9 @@
                 <script type="text/html" id="userTableToolbarDemo">
                     <div class="layui-btn-container">
                         <button class="layui-btn layui-btn-sm" lay-event="addData">新增<i class="layui-icon layui-icon-add-1"></i></button>
-                        <input type="text" id="queryByLoginName" name="queryByLoginName" autocomplete="off"
-                               placeholder="输入登陆名" class="layui-input layui-btn-sm">
-                        <button class="layui-btn layui-btn-sm" lay-event="query">查询<i class="layui-icon layui-icon-search"></i></button>
+                        <input type="text" id="queryByLoginName" name="queryByLoginName" autocomplete="off" style="margin-left: 0px;"
+                               placeholder="请输入登录名" class="layui-input layui-btn-sm">
+                        <button class="layui-btn layui-btn-sm" lay-event="query" style="margin-left: 10px;">查询<i class="layui-icon layui-icon-search"></i></button>
                     </div>
                 </script>
                 <script type="text/html" id="userTableBarDemo">
@@ -58,14 +64,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">用户名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="userName" autocomplete="off" placeholder="用户名"
+                            <input type="text" name="userName" autocomplete="off" placeholder="请输入用户名"
                                    class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">登录名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="loginName" autocomplete="off" placeholder="登录名"
+                            <input type="text" name="loginName" autocomplete="off" placeholder="请输入登录名"
                                    class="layui-input">
                         </div>
                     </div>
@@ -76,6 +82,27 @@
                             <div class="layui-form-mid layui-word-aux" style="float: unset; margin-left: 10px;">
                                 初始、重置密码：<span th:text="${initPassword}"></span>
                             </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userTelephone" autocomplete="off" placeholder="请输入电话"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单位业务(回收单位)</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyBusiness" autocomplete="off" placeholder="回收单位请输入单位业务"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">性别（普通用户）</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="userSex" value="男" title="男">
+                            <input type="radio" name="userSex" value="女" title="女">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -103,7 +130,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">账号失效时间</label>
                             <div class="layui-input-block">
-                                <input type="text" name="expiredTime" id="expiredTimeDate" autocomplete="off"
+                                <input type="text" name="expiredTime" id="expiredTimeDate" autocomplete="off" placeholder="请输入账号失效时间"
                                        class="layui-input">
                             </div>
                         </div>
@@ -142,32 +169,47 @@
                     </div>
 
                     <!-- 隐藏域 -->
-                    <input type="text" name="userId" hidden="hidden"/>
+                    <input type="text" name="userId"  hidden="hidden"/>
+                    <input type="text" name="companyId"  hidden="hidden"/>
+                    <input type="text" name="companyName"  hidden="hidden"/>
+                    <input type="text" name="companyTel"  hidden="hidden"/>
                 </form>
 
                 <div class="layui-form-item">
+                    <div class="layui-form-menu">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                        <legend>用户菜单</legend>
+                        <legend>用户菜单及权限</legend>
                     </fieldset>
                     <div id="userMenuTree" class="demo-tree demo-tree-box layui-col-md6"
                          style="height: 300px; overflow: scroll;"></div>
-                </div>
-                <div class="layui-form-item">
-                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                        <legend>用户权限</legend>
-                    </fieldset>
+                    </div>
+
+                    <div class="layui-form-menu">
+<!--                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">-->
+<!--                            <legend>用户权限</legend>-->
+<!--                        </fieldset>-->
                     <div id="userAuthorityTree" class="demo-tree demo-tree-box layui-col-md6"
                          style="height: 300px; overflow: scroll;"></div>
+                    </div>
                 </div>
+<!--                <div class="layui-form-item">-->
+<!--                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">-->
+<!--                        <legend>用户权限</legend>-->
+<!--                    </fieldset>-->
+<!--                    <div id="userAuthorityTree" class="demo-tree demo-tree-box layui-col-md6"-->
+<!--                         style="height: 300px; overflow: scroll;"></div>-->
+<!--                </div>-->
 
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <a class="layui-btn" onclick="userFormSave()">保存</a>
+                        <a class="layui-btn" style="margin-left: -21px;" onclick="userFormSave1()">普通用户保存</a>
+                        <a class="layui-btn" style="margin-left: 174px;" onclick="userFormSave2()">回收单位保存</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+<!--    操作表单结束-->
 </div>
 </body>
 <!-- js -->

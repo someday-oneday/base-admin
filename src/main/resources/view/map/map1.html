@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Hello, World</title>
+    <link th:href="@{/sys/authority/css/authority.css}" rel="stylesheet" type="text/css"/>
+
+    <style type="text/css">
+        body,
+        html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        #map1_container,
+        #map2_container {
+            float: left;
+            overflow: hidden;
+            width: 48%;
+            height: 100%;
+            margin: 20px 12px;
+        }
+        #allmap1 {
+            height: 100%;
+            margin: 0 0 3px;
+        }
+        #allmap2 {
+            height: 100%;
+            margin: 3px 0 0;
+        }
+        .text1{
+            text-align: center;
+            margin: 10px;
+        }
+        .layui-input{
+            width: 152px;
+        }
+        .layui-form-item{
+            margin-left: -60px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="map1_container">
+    <div class="text1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">上午路线规划</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse1" class="layui-input" >
+                </select>
+                <a class="layui-btn" onclick="planRoute1()">规划</a>
+            </div>
+        </div>
+
+    </div>
+    <div id="allmap1"></div>
+</div>
+<div id="map2_container">
+    <div class="text1">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">下午路线规划</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse2" class="layui-input" >
+                </select>
+                <a class="layui-btn" onclick="planRoute2()">规划</a>
+
+            </div>
+        </div>
+    </div>
+    <div id="allmap2"></div>
+</div>
+
+
+
+<script type="text/javascript"
+        src="//api.map.baidu.com/api?v=2.0&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc">
+</script>
+<script>
+    //退火算法函数部分
+    function buildDistsArrays(xCoors, yCoors){
+        let maxDist = -1;
+        let distance = new Array(xCoors.length);
+        for(let i=0;i<xCoors.length;i++){        //一维长度
+            distance[i] = new Array(xCoors.length);
+            for(let j=0;j<xCoors.length;j++){    //二维长度
+                distance[i][j] = 1000000;
+            }
+        }
+        for (let i = 0; i < xCoors.length; i++){
+            distance[i][i] = 0;// 对角线为0
+            for (let j = i + 1; j < xCoors.length; j++){
+                distance[i][j] = EUC_2D_dist(xCoors[i], xCoors[j], yCoors[i], yCoors[j]);
+                distance[j][i] = distance[i][j];
+                if (distance[i][j] > maxDist) {
+                    maxDist = distance[i][j];
+                }
+            }
+        }
+        return distance;
+    }
+
+
+    function cost(rout,distance) {//计算该点序列的路径总长度
+        let sum = 0;
+        for (let i = 0; i < rout.length-1; i++) {
+            sum += distance[ rout[i] ][ rout[i+1] ];
+        }
+        return sum;
+    }
+
+    function copyRout( rout) {//复制路经
+        let out = new Array(rout.length);
+        for (let i = 0; i < rout.length; i++)
+            out[i] = rout[i];
+        return out;
+    }
+
+    /**
+     * 实现交叉互换，随机出两个不相同随机数，然后交换那两个位置的点
+     * @param rout
+     * @return 输出经过交换的新路径
+     */
+    function swap(rout) {
+        let x,y;
+        x=rout.length - 1;
+        y=1;
+        let r1 = parseInt(Math.random() * (x - y + 1) + y);//生成随机数0 ~ rout.length-1
+        let r2 = parseInt(Math.random() * (x - y + 1) + y);
+        while (r1===r2) {
+            r2 = parseInt(Math.random() * (x - y + 1) + y);//两个随机数不能相同
+        }
+        let change = copyRout(rout);
+        let tmp = change[r1];
+        change[r1] = change[r2];
+        change[r2] = tmp;
+        return change;//输出交换任意两点后的点序列
+    }
+
+    function BFS(xCoors,distance) {
+        //初始队列放入0，vis[0]=1
+        let q = [];
+        q.push(0);
+
+        let vis = new Array(xCoors.length);//已被访问结点数组，访问=1，未访问=0
+        for(let i = 0; i < xCoors.length; i++){
+            vis[i] = 0;
+        }
+        let out = new Array(xCoors.length);//排好序后的节点数组
+        out[0] = 0;
+        vis[0] = 1;//第一个点标记为已访问
+        let totalDist = 0;//现已加入的点的总距离
+        let index = 1;//第2个节点的索引号
+        while (q.length !== 0) {
+            //只有还有未被访问的结点，则继续循环，直至所有节点都被访问过
+            let front = q.pop();//获取首结点，并删除该节点
+            let min = 100000;//min为两点间最短距离，Integer.MAX_VALUE：int数据类型的最大值
+            let sIdx = 0;
+            //获取队列的首结点font，找到与该节点距离最近的点i（该点未被访问，即vis[i]==0，且不是自己，即i!=font）
+            for (let i = 0; i < xCoors.length; i++) {
+                if (vis[i] === 0 && i !== front && min > distance[front][i]) {
+                    min = distance[front][i];//两点最短距离
+                    sIdx = i;//记录距离最短点的坐标
+                }
+            }
+            if (min !== 100000) {
+                vis[sIdx] = 1;//将距离最近的点标记为已访问
+                q.push(sIdx);//将该点加入队列
+                out[index] = sIdx;//将该点加入排好序后的数组，index=1起
+                index++;
+                totalDist += distance[front][sIdx];//现已加入的点的总距离
+            }
+        }
+        q = null;//队列赋值为空
+
+        return out;//返回排好序的节点坐标
+    }
+    /**
+     * 模拟退火算法SA
+     * @param rout	输入用于迭代的路径
+     * @param T0	初始温度
+     * @param d	温度衰减率，0.98
+     * @param Tk	最低温度
+     * @param L		内循环次数
+     * @return	输出得到的最优路径
+     */
+    function Sa_TSP(rout,distance, T0, d, Tk, L) {
+        let bestpath, curentpath;//最佳、当前路经
+        let t = T0;//当前温度=初始温度
+        bestpath = curentpath = copyRout(rout);
+        while (t > Tk) {//当前温度>最低温度
+            let it=0;//内循环次数初值为0
+            while (it<L) {
+                let update_path = swap(curentpath);//更新路经
+                let delta = cost(update_path, distance) - cost(curentpath, distance);
+                //计算更新后的路经结果成本与更新前（当前）路经结果成本的差值
+                if (delta < 0) {//为负值，即结果成本降低了，则接受
+                    curentpath = update_path;
+                    bestpath = update_path;
+                } else {
+                    //若为正值，则以一定的概率接收
+                    let p = Math.exp(-delta/t);//接收概率（取决于当前温度和两次路经结果的差值）
+                    if (Math.random() <= p) {
+                        //random.nextDouble()：生成一个大于等于0.0小于1.0的浮点数
+                        //若接收概率大于生成的随机数，则接收更新后的路径
+                        curentpath = update_path;
+                    }
+                }
+                it++;
+            }
+            t *=d;
+        }
+        return bestpath;
+    }
+
+    function print(rout,distance) {
+        console.log("总长度：" + cost(rout,distance));
+        console.log("总路线：" + rout[0]);
+        for (let i = 1; i < rout.length; i++) {
+            console.log("->" + rout[i]);
+        }
+    }
+
+    //输入排好序的点序列，点的名称，横纵坐标，输出排好序的点对象数组（名称，横坐标，纵坐标）
+    function printPoint(rout, nameRout, xRout, yRout){
+        let points = [];
+        for (let i = 0 ; i < rout.length; i++){
+            let point = {};
+            point.name = nameRout[rout[i]];
+            point.x = xRout[rout[i]];
+            point.y = yRout[rout[i]];
+            points.push(point);
+        }
+        return points;
+    }
+
+    function EUC_2D_dist( x1, x2, y1, y2) {
+        return  Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
+
+    //去重复元素（输出标记nameRout,重复1，不重复0）
+    //3个数组，点的名字（地点名），横坐标，纵坐标
+    function eliminateDuplicate(nameRout, xRout, yRout){
+        let nameRout1 = [];//记录重复元素
+        for (let i = 0; i < nameRout.length;i++){
+            nameRout1[i] = 0;
+        }
+        for (let i = 1; i < nameRout.length; i++){
+            for (let j=0 ;j < i;j++){
+                if(nameRout[i] === nameRout[j] && xRout[i] === xRout[j] && yRout[i] === yRout[j]){
+                    nameRout1[i] = 1;//有重复，记为1
+                }
+            }
+        }
+        return nameRout1;
+    }
+
+    //去重复元素（输出标记idRout,重复1，不重复0）
+    //输出点的id标记
+    function eliminateDuplicate1(idRout){
+        let idRout1 = [];//记录重复元素
+        for (let i = 0; i < idRout.length;i++){
+            idRout1[i] = 0;
+        }
+        for (let i = 1; i < idRout.length; i++){
+            for (let j=0 ;j < i;j++){
+                if(idRout[i] === idRout[j]){
+                    idRout1[i] = 1;//有重复，记为1
+                }
+            }
+        }
+        return idRout1;
+    }
+
+    //nameRout1:标记重复的数组，1重复，0不重复
+    //rout：原始数组
+    //输出去重后的rout
+    function changeArray(nameRout1, rout){
+        let changeRout = [];
+        for (let i = 0;i < nameRout1.length; i++){
+            if(nameRout1[i] === 0){
+                changeRout.push(rout[i]);
+            }
+        }
+        return changeRout;
+    }
+    //退火算法函数部分结束
+
+    let p111 = new BMap.Point(116.301934,39.977552);
+    let p222 = new BMap.Point(116.508328,39.919141);
+    let p333 = new BMap.Point(116.365942,39.996165);
+    let p444 = new BMap.Point(116.408757,39.995704);
+
+    $.post(ctx + "/info/infohouse/list", {}, function (data) {
+        if(data.flag){
+            $('#selectHouse1').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse1').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+            $('#selectHouse2').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse2').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+        }
+    });
+
+    function planRoute1(){
+        $.post(ctx + "/sys/sysUser/getUser", {loginName:window.parent.loginName}, function (data) {
+            //debugger
+            if(data.flag){
+                console.log(data);
+                // debugger
+                $.post(ctx + "/order/order22/list", {
+                    companyId:data.data.companyId,
+                    gotime:getNowFormatDate(),
+                    gotimes:'08:30-11:30'
+                }, function (data1) {
+                    if(data1.flag){
+
+                        console.log("data1.data------------");
+                        console.log(data1.data);
+                        console.log("data1.data------------");
+
+                        let idPoints = [];
+                        let namePoints = [];
+                        let xCoord = [];
+                        let yCoord = [];
+                        for (let i = 1; i < data1.data.length + 1;i++){
+                            idPoints[i] = data1.data[i-1].hid;//点id
+                            namePoints[i] = data1.data[i-1].hname;//点名称
+                            xCoord[i] = Number(data1.data[i-1].lat);//纬度
+                            yCoord[i] = Number(data1.data[i-1].lng);//经度
+                        }
+                        let selectHouse11= $("#selectHouse1").val();
+                        // $.post(ctx + "/info/infohouse/list", {
+                        $.post(ctx + "/info/infohouse/list", {
+                            hid:selectHouse11,
+                        }, function (data3) {
+                            if(data3.flag){
+                                // console.log(selectHouse11);
+                                console.log(data3);
+                                console.log("+++++++++++++++++++++++++++++++");
+                                console.log(Number(data3.data[0].lng));//经度
+                                console.log(Number(data3.data[0].lat));//纬度
+                                console.log(data3.data[0].hname);//地点名称
+                                console.log("+++++++++++++++++++++++++++++++");
+                                console.log(idPoints);
+                                // debugger
+                                //初始数组
+                                idPoints[0] = data3.data[0].hid;
+                                namePoints[0] = data3.data[0].hname;
+                                xCoord[0] = Number(data3.data[0].lat);//纬度
+                                yCoord[0] = Number(data3.data[0].lng);//经度
+                                // debugger
+                                //去重，得到新的不重复数组
+                                // let flagPoints = eliminateDuplicate(namePoints, xCoord, yCoord);//记录重复数组
+                                let flagPoints = eliminateDuplicate1(idPoints);//记录重复数组
+                                //去重后的数组
+                                let idPoints1 = changeArray(flagPoints, idPoints);
+                                let namePoints1 = changeArray(flagPoints, namePoints);
+                                let xCoord1 = changeArray(flagPoints, xCoord);
+                                let yCoord1 = changeArray(flagPoints, yCoord);
+                                console.log(idPoints1);
+                                console.log(namePoints1);
+                                console.log(xCoord1);
+                                console.log(yCoord1);
+                                console.log(namePoints1.length);
+                                console.log("-------------去重后");
+                                // debugger
+                                //定义起点，终点，途经点
+                                let startPoint1 = [];
+                                let endPoint1 = [];
+                                let pathPoints1 = [];
+                                // 百度地图API功能
+                                let map1 = new BMap.Map("allmap1");
+                                map1.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                                map1.enableScrollWheelZoom(true);
+                                if(namePoints1.length > 2){
+                                    let distanceList = buildDistsArrays(xCoord1, yCoord1);
+                                    let rout = BFS(xCoord1,distanceList);//排好序的点下标（贪心）
+                                    let T0=1e6;
+                                    let d=0.99;
+                                    let Tk=1e-6;
+                                    let L = 20*rout.length;//内循环次数
+                                    let rout2 = Sa_TSP(rout, distanceList, T0, d, Tk, L);
+                                    print(rout2, distanceList);
+                                    let points = printPoint(rout2, namePoints1, xCoord1, yCoord1);
+                                    console.log("排好序后的点对象数组：");
+                                    console.log(points);
+                                    startPoint1[0] = points[0].y;
+                                    startPoint1[1] = points[0].x;
+                                    endPoint1[0] = points[points.length - 1].y;
+                                    endPoint1[1] = points[points.length - 1].x;
+                                    let pathPointsIndex = 0;
+                                    for (let i = 1; i < points.length - 1;i++){
+                                        pathPoints1[pathPointsIndex] = new BMap.Point(points[i].y,points[i].x);
+                                        pathPointsIndex++;
+                                    }
+                                    console.log(startPoint1);
+                                    console.log(endPoint1);
+                                    console.log(pathPoints1);
+                                    let p1 = new BMap.Point(startPoint1[0],startPoint1[1]);//起点
+                                    let p2 = new BMap.Point(endPoint1[0],endPoint1[1]);//终点
+                                    let driving1 = new BMap.DrivingRoute(map1,
+                                        {renderOptions:{map: map1, autoViewport: true}});
+                                    driving1.search(p1, p2,{waypoints:pathPoints1});//waypoints表示途经点
+                                }
+                                else if(namePoints1.length === 2){
+                                    let startPoint1 = [];
+                                    let endPoint1 = [];
+                                    startPoint1[0] = yCoord1[0];
+                                    startPoint1[1] = xCoord1[0];
+                                    endPoint1[0] = yCoord1[1];
+                                    endPoint1[1] = xCoord1[1];
+                                    let p1 = new BMap.Point(startPoint1[0],startPoint1[1]);//起点
+                                    let p2 = new BMap.Point(endPoint1[0],endPoint1[1]);//终点
+                                    let driving1 = new BMap.DrivingRoute(map1,
+                                        {renderOptions:{map: map1, autoViewport: true}});
+                                    driving1.search(p1, p2);//waypoints表示途经点
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function planRoute2(){
+        $.post(ctx + "/sys/sysUser/getUser", {loginName:window.parent.loginName}, function (data) {
+            //debugger
+            if(data.flag){
+                console.log(data);
+                // debugger
+                $.post(ctx + "/order/order22/list", {
+                    companyId:data.data.companyId,
+                    gotime:getNowFormatDate(),
+                    gotimes:'14:30-18:30',
+                }, function (data1) {
+                    if(data1.flag){
+
+                        console.log("data1.data------------");
+                        console.log(data1.data);
+                        console.log("data1.data------------");
+
+                        let idPoints = [];
+                        let namePoints = [];
+                        let xCoord = [];
+                        let yCoord = [];
+                        for (let i = 1; i < data1.data.length + 1;i++){
+                            idPoints[i] = data1.data[i-1].hid;//点id
+                            namePoints[i] = data1.data[i-1].hname;//点名称
+                            xCoord[i] = Number(data1.data[i-1].lat);//纬度
+                            yCoord[i] = Number(data1.data[i-1].lng);//经度
+                        }
+                        let selectHouse11= $("#selectHouse2").val();
+                        // $.post(ctx + "/info/infohouse/list", {
+                        $.post(ctx + "/info/infohouse/list", {
+                            hid:selectHouse11,
+                        }, function (data3) {
+                            if(data3.flag){
+                                // console.log(selectHouse11);
+                                console.log(data3);
+                                console.log("+++++++++++++++++++++++++++++++");
+                                console.log(Number(data3.data[0].lng));//经度
+                                console.log(Number(data3.data[0].lat));//纬度
+                                console.log(data3.data[0].hname);//地点名称
+                                console.log("+++++++++++++++++++++++++++++++");
+                                console.log(idPoints);
+                                // debugger
+                                //初始数组
+                                idPoints[0] = data3.data[0].hid;
+                                namePoints[0] = data3.data[0].hname;
+                                xCoord[0] = Number(data3.data[0].lat);//纬度
+                                yCoord[0] = Number(data3.data[0].lng);//经度
+                                // debugger
+                                //去重，得到新的不重复数组
+                                // let flagPoints = eliminateDuplicate(namePoints, xCoord, yCoord);//记录重复数组
+                                let flagPoints = eliminateDuplicate1(idPoints);//记录重复数组
+                                //去重后的数组
+                                let idPoints1 = changeArray(flagPoints, idPoints);
+                                let namePoints1 = changeArray(flagPoints, namePoints);
+                                let xCoord1 = changeArray(flagPoints, xCoord);
+                                let yCoord1 = changeArray(flagPoints, yCoord);
+                                console.log(idPoints1);
+                                console.log(namePoints1);
+                                console.log(xCoord1);
+                                console.log(yCoord1);
+                                console.log(namePoints1.length);
+                                console.log("-------------去重后");
+                                // debugger
+                                //定义起点，终点，途经点
+                                let startPoint1 = [];
+                                let endPoint1 = [];
+                                let pathPoints1 = [];
+                                // 百度地图API功能
+                                let map2 = new BMap.Map("allmap2");
+                                map2.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                                map2.enableScrollWheelZoom(true);
+                                if(namePoints1.length > 2){
+                                    let distanceList = buildDistsArrays(xCoord1, yCoord1);
+                                    let rout = BFS(xCoord1,distanceList);//排好序的点下标（贪心）
+                                    let T0=1e6;
+                                    let d=0.99;
+                                    let Tk=1e-6;
+                                    let L = 20*rout.length;//内循环次数
+                                    let rout2 = Sa_TSP(rout, distanceList, T0, d, Tk, L);
+                                    print(rout2, distanceList);
+                                    let points = printPoint(rout2, namePoints1, xCoord1, yCoord1);
+                                    console.log("排好序后的点对象数组：");
+                                    console.log(points);
+                                    startPoint1[0] = points[0].y;
+                                    startPoint1[1] = points[0].x;
+                                    endPoint1[0] = points[points.length - 1].y;
+                                    endPoint1[1] = points[points.length - 1].x;
+                                    let pathPointsIndex = 0;
+                                    for (let i = 1; i < points.length - 1;i++){
+                                        pathPoints1[pathPointsIndex] = new BMap.Point(points[i].y,points[i].x);
+                                        pathPointsIndex++;
+                                    }
+                                    console.log(startPoint1);
+                                    console.log(endPoint1);
+                                    console.log(pathPoints1);
+                                    let p1 = new BMap.Point(startPoint1[0],startPoint1[1]);//起点
+                                    let p2 = new BMap.Point(endPoint1[0],endPoint1[1]);//终点
+                                    let driving2 = new BMap.DrivingRoute(map2,
+                                        {renderOptions:{map: map2, autoViewport: true}});
+                                    driving2.search(p1, p2,{waypoints:pathPoints1});//waypoints表示途经点
+
+
+
+
+                                }
+                                else if(namePoints1.length === 2){
+                                    let startPoint1 = [];
+                                    let endPoint1 = [];
+                                    startPoint1[0] = yCoord1[0];
+                                    startPoint1[1] = xCoord1[0];
+                                    endPoint1[0] = yCoord1[1];
+                                    endPoint1[1] = xCoord1[1];
+                                    let p1 = new BMap.Point(startPoint1[0],startPoint1[1]);//起点
+                                    let p2 = new BMap.Point(endPoint1[0],endPoint1[1]);//终点
+                                    let driving2 = new BMap.DrivingRoute(map2,
+                                        {renderOptions:{map: map2, autoViewport: true}});
+                                    driving2.search(p1, p2);//waypoints表示途经点
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+//---------------------------------
+    $().ready(function() {
+        planRoute1();
+        planRoute2();
+    })
+
+    function getNowFormatDate() {
+        let date = new Date();
+        let seperator1 = "-";
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        let currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
+    }
+
+</script>
+
+</body>
+</html>

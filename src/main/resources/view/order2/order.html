@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta charset="UTF-8">
+    <title>预约订单</title>
+    <link th:href="@{/sys/authority/css/authority.css}" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<style>
+    .main{
+        margin: 0px;
+        padding: 0px;
+    }
+    .layui-col-md6{
+        margin-left: 301px;
+        /*margin-top: 52px;*/
+    }
+    /*.layui-select-title{*/
+    /*    padding-right: 101px;*/
+    /*}*/
+    .layui-unselect{
+        width: 320px;
+    }
+    .layui-btn{
+        margin-left: 398px;
+    }
+    /** {*/
+    /*    padding: 0;*/
+    /*    margin: 0;*/
+    /*    box-sizing: border-box;*/
+    /*}*/
+
+    /*!* 容器 *!*/
+    /*.main {*/
+    /*    border: 1px solid red;*/
+    /*    width: 600px;*/
+    /*    padding: 15px;*/
+    /*    margin: auto;*/
+    /*}*/
+    /*!* 全局input样式，占用最大，取消浏览器默认框样式 *!*/
+    /*input[type=text], input[type=password] ,input[type=date],input[type=submit],select{*/
+    /*    width: 100%;*/
+    /*    padding: 10px;*/
+    /*    border-radius: 5px;*/
+    /*    outline: none;*/
+    /*}*/
+
+    /*!* 包含label与输入域的容器，label与输入域元素居中对齐 *!*/
+    /*.form-group {*/
+    /*    display: flex;*/
+    /*    padding: 5px;*/
+    /*    align-items: center;*/
+    /*}*/
+    /*!* 文本右对齐 *!*/
+    /*.form-label {*/
+    /*    flex-basis: 20%;*/
+    /*    text-align: right;*/
+    /*    padding: 10px;*/
+    /*}*/
+    /*.form-input {*/
+    /*    flex-basis: 80%;*/
+    /*}*/
+
+</style>
+<body>
+<div class="main">
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">预约订单</div>
+            <div class="layui-card-body">
+                <form id="formOrder" class="layui-form layui-form-pane">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">垃圾种类</label>
+                        <div class="layui-input-block">
+                            <select name="gid" id="selectGarbage" class="layui-input" >
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选择地点</label>
+                        <div class="layui-input-block">
+                            <select name="hid" id="selectHouse" class="layui-input" >
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">详细地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="address"  placeholder="详细地址"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">预估重量</label>
+                        <div class="layui-input-block">
+                            <select name="weight" id=""  class="layui-input">
+                                <option value="不足5kg">不足5kg</option>
+                                <option value="5-10kg">5-10kg</option>
+                                <option value="10-20kg">10-20kg</option>
+                                <option value="20-50kg">20-50kg</option>
+                                <option value="50kg以上">50kg以上</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上门时间</label>
+                        <div class="layui-input-block">
+                            <input type="date" name="gotime" class="layui-input"><br>
+
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上门时间段</label>
+                        <div class="layui-input-block">
+                            <select name="gotimes" id=""  class="layui-input">
+                                <option value="08:30-11:30">08:30-11:30</option>
+                                <option value="14:30-18:30">14:30-18:30</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="telephone" placeholder="联系电话"
+                                   id="tel" class="layui-input" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="description" placeholder="备注"
+                                    class="layui-input" >
+                        </div>
+                    </div>
+
+                    <!-- 隐藏域 -->
+                            <input type="text" name="userId" id="userId2" hidden="hidden">
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <a class="layui-btn" onclick="submitOrder()">预约回收</a>
+
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--<div class="main">-->
+<!--    <form  id="formOrder">-->
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">垃圾种类</label>-->
+<!--            <div class="form-input">-->
+<!--                <select name="gid" id="selectGarbage1">-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">选择小区</label>-->
+<!--            <div class="form-input">-->
+<!--                <select name="hid" id="selectHouse">-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">详细地址</label>-->
+<!--            <div class="form-input">-->
+<!--                <input type="text" name="address">-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">预估重量</label>-->
+<!--            <div class="form-input">-->
+<!--                <select name="weight" id="">-->
+<!--                    <option value="不足5kg">不足5kg</option>-->
+<!--                    <option value="5-10kg">5-10kg</option>-->
+<!--                    <option value="10-20kg">10-20kg</option>-->
+<!--                    <option value="20-50kg">20-50kg</option>-->
+<!--                    <option value="50kg以上">50kg以上</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">上门时间</label>-->
+<!--            <div class="form-input">-->
+<!--                <input type="date" name="gotime"><br>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">上门时间段</label>-->
+<!--            <div class="form-input">-->
+<!--                <select name="gotimes" id="">-->
+<!--                    <option value="08:30-11:30">08:30-11:30</option>-->
+<!--                    <option value="14:30-18:30">14:30-18:30</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">联系电话</label>-->
+<!--            <div class="form-input">-->
+<!--                <input type="text" name="telephone" id="tel" readonly>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label">备注</label>-->
+<!--            <div class="form-input">-->
+<!--                <input type="text" name="description">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        &lt;!&ndash;        隐藏域&ndash;&gt;-->
+<!--        <input type="text" name="userId" id="userId2" hidden="hidden">-->
+
+<!--        <div class="form-group">-->
+<!--            <label class="form-label"></label>-->
+<!--            <div class="form-input">-->
+<!--                <input onclick="submitOrder()" type="button" name="Button" value="预约回收"/>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </form>-->
+<!--</div>-->
+</body>
+<script>
+    let layer;
+    let tableIns;
+    layui.use(['layer','form'], function () {
+        layer = layui.layer;
+    });
+    let form = layui.form;//select、单选、复选等依赖form
+    $.post(ctx + "/info/infohouse/list", {}, function (data) {
+        if(data.flag){
+            // layer.msg(data.msg,{icon:1,timeout:2000});
+            // data.data
+            // console.log(data);
+            // debugger
+            $('#selectHouse').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+        }
+    });
+    $.post(ctx + "/info/infogarbage/list", {}, function (data) {
+        if(data.flag){
+            // layer.msg(data.msg,{icon:1,timeout:2000});
+            // data.data
+            $('#selectGarbage').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectGarbage').append(' <option value="'+data.data[i].gid+'">'+data.data[i].gname+'</option>');
+            }
+        }
+    });
+    $.post(ctx + "/sys/sysUser/getUser", {
+        loginName: window.parent.loginName
+    }, function (data) {
+        if (data.flag) {
+            // console.log(data.data);
+            // debugger
+            //编辑
+            //回显操作表单
+            $("#tel").val(data.data.userTelephone);
+            $("#userId2").val(data.data.userId);
+            // form.render();
+        }
+    });
+    function  submitOrder() {
+     let userForm = $("#formOrder").serializeObject();
+
+     console.log(userForm);
+     // debugger
+     // $.ajax({url:ctx + "/order/saveOrder",
+     //     type:'POST',
+     //     data:userForm,
+     //     contentType:'application/json;charset=utf-8',
+     //     dataType:'json',
+     //     success:function (res){
+     //         debugger
+     //     }
+     // });
+     $.post(ctx + "/order/order2/saveOrder2", userForm, function (data) {
+                if(data.flag){
+                    layer.msg(data.msg,{icon:1,timeout:2000});
+                }
+     });
+ }
+
+</script>
+</html>

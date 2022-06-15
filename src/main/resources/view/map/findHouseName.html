@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc"></script>
+    <title>单个地址解析</title>
+    <style>
+        body,html{
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        #container{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #result{
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 250px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 2px 6px 0 rgba(27, 142, 236, 0.5);
+            border-radius: 7px;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+<div id='container'></div>
+<div id='result'>北京市海淀区上地10街</div>
+<script>
+    var map = new BMapGL.Map('container');
+    map.centerAndZoom(new BMapGL.Point(116.331398,39.897445), 12);
+    //创建地址解析器实例
+    var myGeo = new BMapGL.Geocoder();
+    // 将地址解析结果显示在地图上，并调整地图视野
+
+
+    let point1 = ['李家废品站','龙鑫废品站','阿龙废品回收站','哈尔滨市人才服务局','东北农业大学','黑龙江中医药大学','哈尔滨理工大学','黑龙江省商务厅'];
+
+    for (let i = 0; i<point1.length;i++) {
+        myGeo.getPoint(point1[i], function (point) {
+            if (point) {
+                map.centerAndZoom(point, 16);
+                map.addOverlay(new BMapGL.Marker(point, {title: '北京市海淀区上地10街'}))
+                console.log(point1[i]);
+                console.log(point);
+                console.log("==========");
+            } else {
+                alert('您选择的地址没有解析到结果！');
+            }
+        }, '哈尔滨市')
+    }
+
+
+</script>
+</body>
+</html>

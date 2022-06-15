@@ -1,0 +1,129 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--    xmlns:th="http://www.thymeleaf.org"-->
+    <script th:replace="common/head::static"></script>
+</head>
+<style>
+    #queryByGarbageName{
+        width: 280px;
+        display: inline-block;
+    }
+
+    .query{
+        margin-left: 10px;
+    }
+    .layui-col-md6{
+        margin-left: 111px;
+        margin-top: 27px;
+    }
+    .layui-form-item{
+        margin-bottom: 2px;
+    }
+</style>
+<body>
+<div class="layui-card-body">
+    <!-- 表格主体 -->
+    <table class="layui-hide" id="userTable" lay-filter="test"></table>
+    <!-- 模板 -->
+    <script type="text/html" id="userTableToolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="addData">新增</button>
+            <input  type="text" id="queryByGarbageName" name="queryByGarbageName" autocomplete="off"
+                    placeholder="请输入单位名" class="layui-input layui-btn-sm">
+            <button class="layui-btn layui-btn-sm query" lay-event="query">查询<i class="layui-icon layui-icon-search"></i></button>
+        </div>
+    </script>
+    <script type="text/html" id="userTableBarDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="editCarCompany" >修改<i class="layui-icon layui-icon-edit"></i></a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除<i class="layui-icon layui-icon-close"></i></a>
+    </script>
+</div>
+</div>
+<div id="editCarCompany1" style="display: none;">
+
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="carname" autocomplete="off" placeholder="车辆名称"
+                       class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆载重</label>
+            <div class="layui-input-block">
+                <input type="number" id="weight" autocomplete="off" placeholder="车辆载重"
+                       class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆数目</label>
+            <div class="layui-input-block">
+                <input type="number" id="number" autocomplete="off" placeholder="车辆数目"
+                       class="layui-input" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">垃圾类型</label>
+            <div class="layui-input-block">
+                <select name="gname" id="selectGarbage" class="layui-input" >
+                </select>
+            </div>
+        </div>
+    </div>
+
+<!--    -->
+<!--    <div><span>车辆名称</span><input type="text" id="carname"/></div>-->
+<!--    <div><span>车辆载重</span><input type="number" id="weight"/></div>-->
+<!--    <div><span>车辆数目</span><input type="number" id="number"/></div>-->
+<!--    <div><span>所属单位</span> <select name="companyName" id="selectCompany">-->
+<!--    </select></div>-->
+<!--    <div><span>处理垃圾类型</span> <select name="gname" id="selectGarbage">-->
+<!--    </select></div>-->
+
+</div>
+<div id="addCarCompany1" style="display: none;">
+
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="carname1" autocomplete="off" placeholder="车辆名称"
+                       class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆载重</label>
+            <div class="layui-input-block">
+                <input type="number" id="weight1" autocomplete="off" placeholder="车辆载重"
+                       class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">车辆数目</label>
+            <div class="layui-input-block">
+                <input type="number" id="number1" autocomplete="off" placeholder="车辆数目"
+                       class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">垃圾类型</label>
+            <div class="layui-input-block">
+                <select name="gname" id="selectGarbage1" class="layui-input" >
+                </select>
+            </div>
+        </div>
+    </div>
+<!--    -->
+<!--    <div><span>车辆名称</span><input type="text" id="carname1"/></div>-->
+<!--    <div><span>车辆载重</span><input type="number" id="weight1"/></div>-->
+<!--    <div><span>车辆数目</span><input type="number" id="number1"/></div>-->
+<!--    <div><span>处理垃圾类型</span> <select name="gname" id="selectGarbage1">-->
+<!--    </select></div>-->
+
+</div>
+</body>
+<script th:src="@{/info/carlist/js/companycar.js}"></script>
+</html>

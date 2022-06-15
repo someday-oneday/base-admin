@@ -37,4 +37,9 @@ public class SysUser implements Serializable {
 
     private Date updateTime;//修改时间
 
+    private String companyId;//公司id
+
+    private String userSex;//用户性别
+
+    private String userTelephone;//用户电话
 }

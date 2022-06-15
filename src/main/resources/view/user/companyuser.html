@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户</title>
+    <!-- 引入公用部分 -->
+    <script th:replace="common/head::static"></script>
+    <!-- 样式 -->
+    <link th:href="@{/sys/authority/css/authority.css}" rel="stylesheet" type="text/css"/>
+</head>
+
+<style>
+    .main{
+        margin: 0px;
+        padding: 0px;
+    }
+    .layui-col-md6{
+        margin-left: 301px;
+        margin-top: 52px;
+    }
+    .layui-btn{
+        margin-left: 435px;
+    }
+</style>
+<body>
+<div class="main">
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">单位信息</div>
+            <div class="layui-card-body">
+                <form id="authorityForm" class="layui-form layui-form-pane">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单位名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyName" autocomplete="off" placeholder="单位名称"
+                                   class="layui-input" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">登录名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="loginName" autocomplete="off" placeholder="登录名"
+                                   class="layui-input" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单位业务</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyBusiness" autocomplete="off" placeholder="单位业务"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyTel" autocomplete="off" placeholder="联系电话"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <a class="layui-btn" onclick="authorityFormSave()">修改</a>
+                        </div>
+                    </div>
+                    <!-- 隐藏域 -->
+                    <input type="text" name="companyId" hidden="hidden"/>
+                    <input type="text" name="createTime" hidden="hidden"/>
+                    <input type="text" name="expiredTime" hidden="hidden"/>
+                    <input type="text" name="lastChangePwdTime" hidden="hidden"/>
+                    <input type="text" name="lastLoginTime" hidden="hidden"/>
+                    <input type="text" name="limitMultiLogin" hidden="hidden"/>
+                    <input type="text" name="limitedIp" hidden="hidden"/>
+                    <input type="text" name="password" hidden="hidden"/>
+                    <input type="text" name="updateTime" hidden="hidden"/>
+                    <input type="text" name="userId" hidden="hidden"/>
+                    <input type="text" name="userName" hidden="hidden"/>
+                    <input type="text" name="valid" hidden="hidden"/>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    let tableIns;
+    let tree;
+    layui.use(['element', 'form', 'table', 'layer', 'laydate','tree', 'util'], function () {
+        let table = layui.table;
+        let form = layui.form;//select、单选、复选等依赖form
+        $.post(ctx + "/info/infocompany/findSysUserCompanyByLoginName", {
+            loginName: window.parent.loginName
+        }, function (data) {
+            if (data.flag) {
+                console.log(data.data);
+                 // debugger
+                //编辑
+                //回显操作表单
+                $("#authorityForm").form(data.data);
+                // form.render();
+            }
+        });
+    });
+
+    /**
+     * 提交保存
+     */
+    function authorityFormSave() {
+        let authorityForm = $("#authorityForm").serializeObject();
+        console.log(authorityForm);
+        //debugger
+            $.post(ctx + "/info/company1/save", {
+                companyId: authorityForm.companyId,
+                companyName:authorityForm.companyName,
+                companyBusiness:authorityForm.companyBusiness,
+                companyTel:authorityForm.companyTel
+            }, function (data1) {
+                if (data1.flag) {
+                    $.post(ctx + "/info/infocompany/findSysUserCompanyByLoginName", {
+                        loginName: window.parent.loginName
+                    }, function (data) {
+                        if (data.flag) {
+                            layer.msg("修改成功", {icon: 1,time: 2000}, function () {});
+                            console.log(data.data);
+                            // debugger
+                            //编辑
+                            //回显操作表单
+                            $("#authorityForm").form(data.data);
+                            // form.render();
+                        }
+                    });
+                }
+            });
+    }
+
+</script>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta charset="UTF-8">
+    <title>预约订单</title>
+
+</head>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    /* 容器 */
+    .main {
+        border: 1px solid red;
+        width: 600px;
+        padding: 15px;
+        margin: auto;
+    }
+    /* 全局input样式，占用最大，取消浏览器默认框样式 */
+    input[type=text], input[type=password] ,input[type=date],input[type=submit],select{
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    /* 包含label与输入域的容器，label与输入域元素居中对齐 */
+    .form-group {
+        display: flex;
+        padding: 5px;
+        align-items: center;
+    }
+    /* 文本右对齐 */
+    .form-label {
+        flex-basis: 20%;
+        text-align: right;
+        padding: 10px;
+    }
+    .form-input {
+        flex-basis: 80%;
+    }
+
+</style>
+<body>
+
+<div class="main">
+    <form  id="formOrder">
+        <div class="form-group">
+            <label class="form-label">垃圾种类</label>
+            <div class="form-input">
+                <select name="garbageName" id="selectGarbage">
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">选择小区</label>
+            <div class="form-input">
+                <select name="houseName" id="selectHouse">
+                </select>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="form-label">详细地址</label>
+            <div class="form-input">
+                <input type="text" name="address">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">预估重量</label>
+            <div class="form-input">
+                <select name="weight" id="">
+                    <option value="不足5kg">不足5kg</option>
+                    <option value="5-10kg">5-10kg</option>
+                    <option value="10-20kg">10-20kg</option>
+                    <option value="20-50kg">20-50kg</option>
+                    <option value="50kg以上">50kg以上</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">上门时间</label>
+            <div class="form-input">
+                <input type="date" name="gotime"><br>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">上门时间段</label>
+            <div class="form-input">
+                <select name="gotimes" id="">
+                    <option value="08:30-11:30">08:30-11:30</option>
+                    <option value="14:30-18:30">14:30-18:30</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">联系电话</label>
+            <div class="form-input">
+                <input type="text" name="telephone" id="tel">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">备注</label>
+            <div class="form-input">
+                <input type="text" name="description">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label"></label>
+            <div class="form-input">
+                <input onclick="submitOrder()" type="button" name="Button" value="预约回收"/>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    let layer;
+    let tableIns;
+    layui.use(['layer','form'], function () {
+        layer = layui.layer;
+    });
+    let form = layui.form;//select、单选、复选等依赖form
+    $.post(ctx + "/info/infohouse/list", {}, function (data) {
+        if(data.flag){
+            // layer.msg(data.msg,{icon:1,timeout:2000});
+            // data.data
+            $('#selectHouse').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse').append(' <option value="'+data.data[i].hname+'">'+data.data[i].hname+'</option>');
+            }
+        }
+    });
+    $.post(ctx + "/info/infogarbage/list", {}, function (data) {
+        if(data.flag){
+            // layer.msg(data.msg,{icon:1,timeout:2000});
+            // data.data
+            $('#selectGarbage').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectGarbage').append(' <option value="'+data.data[i].gname+'">'+data.data[i].gname+'</option>');
+            }
+        }
+    });
+    $.post(ctx + "/sys/sysUser/getUser", {
+        loginName: window.parent.loginName
+    }, function (data) {
+        if (data.flag) {
+            console.log(data.data);
+            // debugger
+            //编辑
+            //回显操作表单
+            $("#tel").val(data.data.userTelephone);
+            // form.render();
+        }
+    });
+    function  submitOrder() {
+     let userForm = $("#formOrder").serializeObject();
+
+     // $.ajax({url:ctx + "/order/saveOrder",
+     //     type:'POST',
+     //     data:userForm,
+     //     contentType:'application/json;charset=utf-8',
+     //     dataType:'json',
+     //     success:function (res){
+     //         debugger
+     //     }
+     // });
+     $.post(ctx + "/order/order/saveOrder", userForm, function (data) {
+                if(data.flag){
+                    layer.msg(data.msg,{icon:1,timeout:2000});
+                }
+     });
+ }
+
+</script>
+</html>

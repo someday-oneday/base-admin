@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>计算驾车时间与距离</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;}
+        #l-map{height:100%;width:78%;float:left;border-right:2px solid #bcbcbc;}
+        #r-result{height:100%;width:20%;float:left;}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zMXzBkKIs9weKTo5kCz278MIG8UW9ACP"></script>
+
+</head>
+<body>
+<div id="allmap"></div>
+<script type="text/javascript">
+    var p1 = new BMap.Point(121.443532,31.24603);
+    var p2 = new BMap.Point(121.481477,31.240103);
+    var p3 = new BMap.Point(121.493262,31.237015);
+    var p4 = new BMap.Point(121.494987,31.230099);
+    var p5 = new BMap.Point(121.489382,31.225034);
+    var p6 = new BMap.Point(121.512953,31.219846);
+    var p7 = new BMap.Point(121.510222,31.228122);
+    var p8 = new BMap.Point(121.520715,31.232198);
+    var p9 = new BMap.Point(121.515828,31.239485);
+
+
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom(p1,12);
+    var output = "需要";
+    var searchComplete = function (results){
+        if (transit.getStatus() != BMAP_STATUS_SUCCESS){
+            return ;
+        }
+        var plan = results.getPlan(0);
+        output += plan.getDuration(true) + "\n";        //获取时间
+        output += "总路程为：" ;
+        output += plan.getDistance(true) + "\n";       //获取距离
+    }
+    var transit = new BMap.DrivingRoute(map, {renderOptions: {map: map},
+        onSearchComplete: searchComplete,
+        onPolylinesSet: function(){
+            setTimeout(function(){alert(output)},"1000");
+        }});
+    transit.search(p1, p2);
+</script>
+</body>
+</html>

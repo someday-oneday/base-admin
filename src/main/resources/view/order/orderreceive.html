@@ -1,0 +1,40 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--    xmlns:th="http://www.thymeleaf.org"-->
+    <script th:replace="common/head::static"></script>
+</head>
+<style>
+    #queryByGarbageName{
+        width: 280px;
+        display: inline-block;
+    }
+
+    .query{
+        margin-left: 10px;
+    }
+</style>
+<body>
+<div class="layui-card-body">
+    <!-- 表格主体 -->
+    <table class="layui-hide" id="userTable" lay-filter="test"></table>
+    <!-- 模板 -->
+    <script type="text/html" id="userTableToolbarDemo">
+        <div class="layui-btn-container">
+            <input  type="text" id="queryByGarbageName" name="queryByGarbageName" autocomplete="off"
+                    placeholder="输入垃圾名" class="layui-input layui-btn-sm">
+            <button class="layui-btn layui-btn-sm query" lay-event="query">查询<i class="layui-icon layui-icon-search"></i></button>
+        </div>
+    </script>
+    <script type="text/html" id="userTableBarDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="finishOrder">完成订单<i class="layui-icon layui-icon-edit"></i></a>
+<!--        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除<i class="layui-icon layui-icon-close"></i></a>-->
+    </script>
+</div>
+<div id="finishOrder1" style="display: none;">
+    <div><span>实际重量</span><input type="number" id="rweight"/></div>
+    <div><span>交易金额</span><input type="number" id="price"/></div>
+</div>
+</body>
+<script th:src="@{/order/orderreceive/js/orderreceive.js}"></script>
+</html>

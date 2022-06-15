@@ -36,7 +36,8 @@ public class SafetyAspect {
      * cn.huanzi.qch.baseadmin.sys.*.controller、
      * cn.huanzi.qch.baseadmin.*.controller包下面的所有方法
      */
-    @Pointcut(value = "execution(public * cn.huanzi.qch.baseadmin.sys.*.controller.*.*(..)) || " +
+    //            "execution(public * cn.huanzi.qch.baseadmin.order.*.controller.*.*(..)) || "+
+    @Pointcut(value = "execution(public * cn.huanzi.qch.baseadmin.*.*.controller.*.*(..)) || " +
             "execution(public * cn.huanzi.qch.baseadmin.*.controller.*.*(..))")
     public void safetyAspect() {}
 

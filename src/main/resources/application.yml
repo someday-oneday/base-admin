@@ -2,7 +2,7 @@
 
 #内置Tomcat容器配置
 server:
-  port: 8888
+  port: 8087
   servlet:
     #应用路径，配置应用路径，可方便进行反向代理
     context-path:
@@ -42,10 +42,10 @@ spring:
 
   #数据库配置
   datasource:
-    url: jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/garbagecollect?serverTimezone=GMT%2B8&characterEncoding=utf-8
     username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
 
 #是否需要输入验证码
 captcha:
@@ -58,11 +58,11 @@ spring:
 
   #数据库配置
   datasource:
-    url: jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/garbagecollect?serverTimezone=GMT%2B8&characterEncoding=utf-8
     username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
 
 #是否需要输入验证码
 captcha:
-  enable: true
+  enable: false

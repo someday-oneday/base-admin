@@ -12,7 +12,8 @@ layui.use(['element', 'form', 'table', 'layer', 'laydate', 'tree', 'util'], func
     //用户列表
     tableIns = table.render({
         elem: '#userTable'
-        , url: ctx + '/sys/sysUser/page'
+        // , url: ctx + '/sys/sysUser/page'
+        , url: ctx + '/info/infocompany/page'
         , method: 'POST'
         //请求前参数处理
         , request: {
@@ -28,6 +29,7 @@ layui.use(['element', 'form', 'table', 'layer', 'laydate', 'tree', 'util'], func
         }
         //响应后数据处理
         , parseData: function (res) { //res 即为原始返回的数据
+            //debugger;
             var data = res.data;
             return {
                 "flag": res.flag, //解析接口状态
@@ -147,17 +149,25 @@ layui.use(['element', 'form', 'table', 'layer', 'laydate', 'tree', 'util'], func
         //删除
         if (obj.event === 'del') {
             layer.confirm('确认删除吗？', function (index) {
+                console.log(data.companyId);
                 //向服务端发送删除指令
                 $.delete(ctx + "/sys/sysUser/delete/" + data.userId, {}, function (data) {
                     tableIns.reload();
                     layer.close(index);
                 })
+                if(data.companyId){
+                    $.delete(ctx + "/info/company1/delete/" + data.companyId, {}, function (data) {
+                        tableIns.reload();
+                        layer.close(index);
+                    })
+                }
             });
         }
         //编辑
         else if (obj.event === 'edit') {
             //回显操作表单
             $("#userForm").form(data);
+            console.log(data);
             $("input[name='loginName']").attr("readonly","readonly");
 
             form.render();
@@ -184,14 +194,59 @@ layui.use(['element', 'form', 'table', 'layer', 'laydate', 'tree', 'util'], func
     });
 });
 
+// 表单校验
+$().ready(function() {
+
+    $("#userForm").validate({
+        rules: {
+            userName: {
+                required: true,
+                rangelength: [1, 20]
+            },
+            loginName: {
+                required: true,
+                rangelength: [1, 20]
+            },
+            userTelephone: {
+                required: true
+            }
+
+        },
+        messages: {
+            userName: {
+                required: "请输入用户名",
+                rangelength: "用户名长度介于 1 到 20 个字符之间"
+            },
+            loginName: {
+                required: "请输入登录名",
+                rangelength: "登录名长度介于 1 到 20 个字符之间"
+            },
+            userTelephone: {
+                required: "请输入电话"
+            }
+        },
+    })
+})
 /**
- * 提交保存
+ * 提交保存普通用户
  */
-function userFormSave() {
+function userFormSave1() {
+    let flag = $("#userForm").valid();
+    if(!flag){
+        //没有通过验证
+        layer.msg("请按要求填写表格", {icon: 2,time: 2000}, function () {});
+        return;
+    }
     let userForm = $("#userForm").serializeObject();
     userForm.updateTime = commonUtil.getNowTime();
+    delete userForm.companyBusiness;
+    delete userForm.companyId;
+    delete userForm.companyName;
+    delete userForm.companyTel;
+    console.log(userForm);
     $.post(ctx + "/sys/sysUser/save", userForm, function (data) {
 
+        console.log(data);
         if(!data.flag){
             layer.msg(data.msg, {icon: 2,time: 2000}, function () {});
             return;
@@ -203,6 +258,7 @@ function userFormSave() {
             userId: data.data.userId,
             menuIdList: menuIdList.join(",")
         };
+        console.log(postData);
         $.post(ctx + "/sys/sysUserMenu/saveAllByUserId", postData, function (data) {});
 
         let authorityIdList = commonUtil.getChildrenByTree(tree.getChecked('userAuthorityTree').length > 0 ? tree.getChecked('userAuthorityTree')[0].children : []);
@@ -210,10 +266,69 @@ function userFormSave() {
             userId: data.data.userId,
             authorityIdList: authorityIdList.join(",")
         };
+        console.log(postData2);
         $.post(ctx + "/sys/sysUserAuthority/saveAllByUserId", postData2, function (data) {});
 
         layer.msg("保存成功", {icon: 1, time: 2000}, function () {});
 
+        //更新table、updateTime
+        $("input[name='updateTime']").val(userForm.updateTime);
+        tableIns.reload();
+    });
+}
+/**
+ * 提交保存回收单位
+ */
+function userFormSave2() {
+    let flag = $("#userForm").valid();
+    if(!flag){
+        //没有通过验证
+        layer.msg("请按要求填写表格", {icon: 2,time: 2000}, function () {});
+        return;
+    }
+    let userForm = $("#userForm").serializeObject();
+    userForm.updateTime = commonUtil.getNowTime();
+    // delete userForm.companyBusiness;
+    console.log(userForm);
+    // debugger
+    $.post(ctx + "/registerCompany/save", {
+        companyId:userForm.companyId,
+        companyName:userForm.userName,
+        companyTel:userForm.userTelephone,
+        companyBusiness:userForm.companyBusiness,
+    },function (data1){
+        if(data1) {
+            console.log(data1.data.companyId);
+            delete userForm.companyBusiness;
+            delete userForm.companyName;
+            delete userForm.companyTel;
+            userForm.userSex = null;
+            userForm.companyId = data1.data.companyId;
+            $.post(ctx + "/sys/sysUser/save", userForm, function (data) {
+
+                console.log(data);
+                if(data){
+                    //保存用户菜单跟用户权限,只要userId，以及Id集合就可以了
+                    let menuIdList = commonUtil.getChildrenByTree(tree.getChecked('userMenuTree').length > 0 ? tree.getChecked('userMenuTree')[0].children : []);
+                    let postData = {
+                        userId: data.data.userId,
+                        menuIdList: menuIdList.join(",")
+                    };
+                    console.log(postData);
+                    $.post(ctx + "/sys/sysUserMenu/saveAllByUserId", postData, function (data) {});
+
+                    let authorityIdList = commonUtil.getChildrenByTree(tree.getChecked('userAuthorityTree').length > 0 ? tree.getChecked('userAuthorityTree')[0].children : []);
+                    let postData2 = {
+                        userId: data.data.userId,
+                        authorityIdList: authorityIdList.join(",")
+                    };
+                    console.log(postData2);
+                    $.post(ctx + "/sys/sysUserAuthority/saveAllByUserId", postData2, function (data) {});
+                    layer.msg("保存成功", {icon: 1, time: 2000}, function () {});
+                    return;
+
+                }});
+        }
         //更新table、updateTime
         $("input[name='updateTime']").val(userForm.updateTime);
         tableIns.reload();

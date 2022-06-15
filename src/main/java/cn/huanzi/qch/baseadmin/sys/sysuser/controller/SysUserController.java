@@ -32,6 +32,23 @@ public class SysUserController extends CommonController<SysUserVo, SysUser, Stri
         return new ModelAndView("sys/user/user","initPassword", SysSettingUtil.getSysSetting().getUserInitPassword());
     }
 
+    @GetMapping("user1")
+    public ModelAndView user1(){
+        return new ModelAndView("user/user");
+    }
+
+    @GetMapping("companyuser")
+    public ModelAndView companyuser(){
+        return new ModelAndView("user/companyuser");
+    }
+
+    @PostMapping("getUser")
+    @Decrypt
+    @Encrypt
+    public Result<SysUserVo> getUser(SysUserVo sysUserVo){
+        return sysUserService.findByLoginName(sysUserVo.getLoginName());
+    }
+
     @PostMapping("resetPassword")
     @Decrypt
     @Encrypt

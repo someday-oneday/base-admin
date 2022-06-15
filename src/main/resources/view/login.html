@@ -8,6 +8,150 @@
     <link rel="shortcut icon" th:href='${sys.sysLogo}' th:mce_href='${sys.sysLogo}' type="image/x-icon">
     <!-- 引入公用部分 -->
     <script th:replace="common/head::static"></script>
+
+<!--    校验-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+    <script>
+        $().ready(function() {
+            // 登录
+// 在键盘按下并释放及提交后验证提交表单
+
+            $("#userLogin").validate({
+                // submitHandler:function(form){
+                //     alert("提交事件!");
+                //     form.submit();},
+                rules: {
+                    username: {
+                        required: true,
+                        rangelength: [1,20]
+                    },
+                    password: {
+                        required: true,
+                        rangelength: [6,20]
+                    },
+                    captcha:{
+                        required: true
+                    }
+
+                },
+                messages: {
+                    username: {
+                        required: "请输入账号",
+                        rangelength: "账号长度介于 1 到 20 个字符之间"
+                    },
+                    password: {
+                        required: "请输入密码",
+                        rangelength: "密码长度介于 6 到 20 个字符之间"
+                    },
+                    captcha: {
+                        required: "请输入验证码"
+                    }
+                },
+                submitHandler:function(form){
+                    formSubmit();
+                }
+
+            })
+// 普通用户注册
+            $("#userForm").validate({
+                // submitHandler:function(form){
+                //     alert("提交事件!");
+                //     form.submit();},
+                rules: {
+                    userName: {
+                        required: true,
+                        rangelength: [1,20]
+                    },
+                    loginName: {
+                        required: true,
+                        rangelength: [1,20]
+                    },
+                    password:{
+                        required: true,
+                        rangelength: [6,20]
+                    },
+                    userSex:{
+                        required: true
+                    },
+                    userTelephone:{
+                        required: true
+                    },
+
+                },
+                messages: {
+                    userName: {
+                        required: "请输入用户名",
+                        rangelength: "用户名长度介于 1 到 20 个字符之间"
+                    },
+                    loginName: {
+                        required: "请输入登录名",
+                        rangelength: "登录名长度介于 1 到 20 个字符之间"
+                    },
+                    password: {
+                        required: "请输入密码",
+                        rangelength: "密码长度介于 6 到 20 个字符之间"
+                    },
+                    userSex:{
+                        required: "请选择性别"
+                    },
+                    userTelephone:{
+                        required: "请输入电话"
+                    },
+
+                }
+            })
+// 回收单位注册
+            $("#companyForm").validate({
+                rules: {
+                    companyName: {
+                        required: true,
+                        rangelength: [1,20]
+                    },
+                    // companyBusiness: {
+                    //     required: true,
+                    // },
+                    companyTel:{
+                        required: true
+                    },
+                    loginName: {
+                        required: true,
+                        rangelength: [1,20]
+                    },
+                    password:{
+                        required: true,
+                        rangelength: [6,20]
+                    },
+
+                },
+                messages: {
+                    companyName: {
+                        required: "请输入单位名称",
+                        rangelength: "单位名称长度介于 1 到 20 个字符之间"
+                    },
+                    // companyBusiness: {
+                    //     required: "请输入单位业务",
+                    // },
+                    companyTel: {
+                        required: "请输入联系电话",
+                    },
+                    loginName: {
+                        required: "请输入登录名",
+                        rangelength: "登录名长度介于 1 到 20 个字符之间"
+                    },
+                    password:{
+                        required: "请输入密码",
+                        rangelength: "密码长度介于 6 到 20 个字符之间"
+                    },
+
+                }
+            })
+        });
+
+
+    </script>
     <style>
         /*上下左右居中*/
         .main {
@@ -16,25 +160,53 @@
             align-items: center;
             margin-top: 150px;
         }
+
+        .layui-card-body-item-img{
+            width: 200px;
+            height: 200px;
+        }
+        .layui-col-md61{
+            margin-left: 114px;
+            margin-top: 89px;
+        }
+        .layui-col-md62{
+            margin-left: 114px;
+            margin-top: 102px;
+        }
+        .layui-form-item1{
+            margin-bottom: 2px;
+        }
+        .layui-form-item2{
+            margin-bottom: 2px;
+        }
+        .layui-form1{
+            width: 262px;
+        }
+        .layui-form2{
+            width: 262px;
+        }
+        .error{
+            color:red;
+        }
     </style>
 </head>
 <body>
 <div class="main">
-    <form class="layui-form layui-form-pane">
+    <form class="layui-form layui-form-pane" id="userLogin">
         <div class="layui-form-item">
             <h1 style="text-align: center" th:text="${sys.sysName}">XXX系统</h1>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">账号<i class="layui-icon layui-icon-username"></i></label>
             <div class="layui-input-block">
-                <input type="text" id="username" name="username" placeholder="请输入账号" class="layui-input">
+                <input type="text"   id="username1" name="username" placeholder="请输入账号" class="layui-input ">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码<i class="layui-icon layui-icon-password"></i></label>
+            <label class="layui-form-label">密码<i class="layui-icon layui-icon-password" ></i></label>
             <div class="layui-input-block">
                 <!-- 为了方便测试，密码类型设置成text，发布生产前记得改回来 -->
-                <input type="text" id="password" name="password" placeholder="请输入密码" class="layui-input">
+                <input type="password" id="password1" name="password" placeholder="请输入密码" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -49,12 +221,149 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <a class="layui-btn" style="margin-left: -50px;margin-right: 50px;" onclick="formSubmit()">登录</a>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button type="submit" id="loginButton" class="layui-btn" style="margin-left: -108px;padding: 0 12px;">登录</button>
+                <button type="reset" class="layui-btn layui-btn-primary" style="margin-left: 0px;padding: 0 12px;">重置</button>
+                <button type="button" class="layui-btn layui-btn-primary" style="margin-left: 0px;padding: 0 12px;" onclick="userRegister()">普通用户注册</button>
+                <button type="button" class="layui-btn layui-btn-primary" style="margin-left: 0px;padding: 0 12px;" onclick="CompanyRegister()">回收单位注册</button>
             </div>
         </div>
     </form>
 </div>
+
+<!--<div class="images">-->
+<!--    <div class="image-left">-->
+<!--        <img th:src="@{/image/foodwaste.jpg}" class="layui-card-body-item-img"/>-->
+
+<!--    </div>-->
+<!--    <div class="image-right">-->
+<!--        <img th:src="@{/image/gright.jpg}" class="layui-card-body-item-img"/>-->
+
+<!--    </div>-->
+<!--</div>-->
+
+<!--普通用户注册-->
+<div id="registerUser" style="display: none;">
+    <div class="layui-col-md61">
+                <form id="userForm" class="layui-form layui-form1 layui-form-pane">
+                    <div class="layui-form-item1">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userName" autocomplete="off" placeholder="请输入用户名"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item1">
+                        <label class="layui-form-label">登录名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="loginName" autocomplete="off" placeholder="请输入登录名"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item1">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="password" autocomplete="off" placeholder="请输入密码"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item1">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="userSex" value="男" title="男">
+                            <input type="radio" name="userSex" value="女" title="女">
+                        </div>
+                    </div>
+                    <div class="layui-form-item1">
+                        <label class="layui-form-label">电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userTelephone" autocomplete="off" placeholder="请输入电话"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+
+                    <!-- 隐藏域 -->
+                    <input type="text" name="userId" hidden="hidden"/>
+                    <input type="text" name="valid" value="Y" hidden="hidden"/>
+                    <input type="text" name="limitMultiLogin" value="Y" hidden="hidden"/>
+                    <input type="text" name="limitedIp" hidden="hidden"/>
+                    <input type="text" name="expiredTime" hidden="hidden"/>
+                    <input type="text" name="lastChangePwdTime" hidden="hidden"/>
+                    <input type="text" name="lastLoginTime" hidden="hidden"/>
+                    <input type="text" name="createTime" hidden="hidden"/>
+                    <input type="text" name="updateTime" hidden="hidden"/>
+                    <button type="button" class="layui-btn " onclick="userRegister1()" style="margin-left: 22px;">注册</button>
+                    <button type="button" class="layui-btn layui-btn-primary" onclick="userRegister2()">取消</button>
+                    <button type="reset" class="layui-btn layui-btn-primary" >重置</button>
+
+                </form>
+    </div>
+</div>
+
+
+<!--回收单位注册-->
+<div id="registerCompany" style="display: none;">
+    <div class="layui-col-md62">
+
+                <form id="companyForm" class="layui-form layui-form2 layui-form-pane">
+
+                    <div class="layui-form-item2">
+                        <label class="layui-form-label">单位名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyName" id="companyName1" autocomplete="off" placeholder="请输入单位名称"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item2">
+                        <label class="layui-form-label">登录名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="loginName" autocomplete="off" placeholder="请输入登录名"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item2">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="password" autocomplete="off" placeholder="请输入密码"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item2">
+                        <label class="layui-form-label">单位业务</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyBusiness" autocomplete="off" placeholder="请输入单位业务"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item2">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="companyTel" autocomplete="off" placeholder="请输入联系电话"
+                                   class="layui-input" >
+                        </div>
+                    </div>
+
+                    <!-- 隐藏域 -->
+                    <input type="text" name="companyId" hidden="hidden"/>
+                    <input type="text" name="userName" hidden="hidden"/>
+                    <input type="text" name="userId" hidden="hidden"/>
+                    <input type="text" name="valid" value="Y" hidden="hidden"/>
+                    <input type="text" name="limitMultiLogin" value="Y" hidden="hidden"/>
+                    <input type="text" name="limitedIp" hidden="hidden"/>
+                    <input type="text" name="expiredTime" hidden="hidden"/>
+                    <input type="text" name="lastChangePwdTime" hidden="hidden"/>
+                    <input type="text" name="lastLoginTime" hidden="hidden"/>
+                    <input type="text" name="createTime" hidden="hidden"/>
+                    <input type="text" name="updateTime" hidden="hidden"/>
+                    <button type="button" class="layui-btn " onclick="CompanyRegister1()" style="margin-left: 20px;">注册</button>
+                    <button type="button" class="layui-btn layui-btn-primary" onclick="CompanyRegister2()">取消</button>
+                    <button type="reset" class="layui-btn layui-btn-primary" >重置</button>
+
+                </form>
+
+    </div>
+</div>
+
+
 </body>
 <script th:inline="javascript">
     //获取后端RSA公钥并存到sessionStorage
@@ -66,6 +375,7 @@
     //重写jq的ajax加密
     jQueryExtend.ajaxExtend();
 </script>
+
 <script>
     let layer;
     layui.use(['layer','form'], function () {
@@ -78,22 +388,161 @@
         document.addEventListener("keydown",function (even) {
             //按下Enter回车键
             if(even.keyCode === 13){
-                formSubmit();
+                // formSubmit();
+                $("#loginButton").trigger('click');
             }
         })
     });
 
+
+    // 普通用户注册
+    let index;
+    //注册
+    function userRegister1(){
+        let flag = $("#userForm").valid();
+        if(!flag){
+            //没有通过验证
+            return;
+        }
+        let userForm = $("#userForm").serializeObject();
+        let nowTime = commonUtil.getNowTime();
+        userForm.updateTime = nowTime;
+        userForm.createTime = nowTime;
+        userForm.lastChangePwdTime = nowTime;
+        userForm.lastLoginTime = nowTime;
+        console.log(userForm);
+        $.post(ctx + "/register/saveUser", userForm, function (data) {
+
+            console.log(data);
+            if (data) {
+                //保存用户菜单跟用户权限,只要userId，以及Id集合就可以了
+                let menuIdList = "330e4151ce684c7b91c5098b8d52a5c5,48e3c35e33144836ba05f588ff38f0d8,2453ecfe388e46ce9c35ab6c590f7210,866e234e3fd347838031af64ff3c8e37,f24459d7279b4e5aaef30a6c8664b360,b67b1e1a204341b7b6d831bdb2ec8358";
+                let postData = {
+                    userId: data.data.userId,
+                    menuIdList: menuIdList,
+                };
+                console.log(postData);
+                $.post(ctx + "/registerUserMenu/saveAllByUserId", postData, function (data) {});
+
+                let authorityIdList = "3fb1c570496d4c09ab99b8d31b06ccc";
+                let postData2 = {
+                    userId: data.data.userId,
+                    authorityIdList: authorityIdList,
+                };
+                console.log(postData2);
+                $.post(ctx + "/registerUserAuthority/saveAllByUserId", postData2, function (data) {});
+
+                layer.msg("注册成功", {icon: 1, time: 2000}, function () {
+                });
+                return;
+            }
+        });
+        layer.close(index);
+    }
+
+    //取消
+    function userRegister2(){
+        layer.close(index);
+    }
+
+    function userRegister() {
+
+        index = layer.open({
+            type:1,
+            title:"普通用户注册",
+            area:['500px','500px'],
+            content:$("#registerUser"),
+
+        })
+    }
+
+    // 回收单位注册
+
+    //注册
+    function CompanyRegister1(){
+
+        let flag = $("#companyForm").valid();
+        if(!flag){
+            //没有通过验证
+            return;
+        }
+        let companyForm = $("#companyForm").serializeObject();
+        let nowTime = commonUtil.getNowTime();
+        companyForm.updateTime = nowTime;
+        companyForm.createTime = nowTime;
+        companyForm.lastChangePwdTime = nowTime;
+        companyForm.lastLoginTime = nowTime;
+        companyForm.userName = companyForm.companyName;
+        console.log(companyForm);
+        $.post(ctx + "/registerCompany/save",{
+            companyId:companyForm.companyId,
+            companyName:companyForm.companyName,
+            companyBusiness:companyForm.companyBusiness,
+            companyTel:companyForm.companyTel,
+        },function (data1){
+            if(data1){
+                console.log(data1.data);
+                delete companyForm.companyName;
+                delete companyForm.companyBusiness;
+                delete companyForm.companyTel;
+                $.post(ctx + "/register/saveUser", companyForm, function (data) {
+
+                    console.log(data);
+                    if (data) {
+                        //保存用户菜单跟用户权限,只要userId，以及Id集合就可以了
+                        let menuIdList = "21a83c2a2c434b158d2fea614fc19946,60c5a5fdf23645959e1ec30e1c19fcf3,35cb950cebb04bb18bb1d8b742a02005,2ecaa3fe2e7d4c14a39ae94af304c086,5142f8b311464f76882c09822ba76f4c,60a3967842fe4dc3a6157e0a89c34904,491207f5ddd64d1388bc2defe6c4f9b7,fb9a9e3e6990430caa0f41de261f2a7a,5cfb0806a4384ea99c6ae5117d11f03f,a7c0bd14f7914e1d91a74581ed5ed43b,defadaee7d3148298fefb4e273bce2b8,b9cd94fe2ee44b7b8daa29ca30cdd84d,f24459d7279b4e5aaef30a6c8664b360,b67b1e1a204341b7b6d831bdb2ec8358";
+                        let postData = {
+                            userId: data.data.userId,
+                            menuIdList: menuIdList,
+                        };
+                        console.log(postData);
+                        $.post(ctx + "/registerUserMenu/saveAllByUserId", postData, function (data) {});
+                        let authorityIdList = "3fb1c570496d4c09ab99b8d31b06zzz";
+                        let postData2 = {
+                            userId: data.data.userId,
+                            authorityIdList: authorityIdList,
+                        };
+                        console.log(postData2);
+                        $.post(ctx + "/registerUserAuthority/saveAllByUserId", postData2, function (data) {});
+
+                        layer.msg("注册成功", {icon: 1, time: 2000}, function () {
+                        });
+                        return;
+                    }
+                });
+                return;
+            }
+        })
+
+
+        layer.close(index);
+    }
+    //取消
+    function CompanyRegister2(){
+        layer.close(index);
+    }
+    function CompanyRegister() {
+
+        index = layer.open({
+            type:1,
+            title:"回收单位注册",
+            area:['500px','500px'],
+            content:$("#registerCompany"),
+        })
+    }
+
     /**
      * 登录
      */
+
     function formSubmit() {
         let rememberMe = true;
         if($("input[name='rememberMe']:checked").length <= 0){
             rememberMe = false;
         }
         $.post(ctx + "/login", {
-            "username": $("#username").val(),
-            "password": $("#password").val(),
+            "username": $("#username1").val(),
+            "password": $("#password1").val(),
             "captcha": $("#captcha").val(),
             "remember-me": rememberMe,
         }, function (data) {

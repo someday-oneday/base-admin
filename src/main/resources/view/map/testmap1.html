@@ -1,0 +1,111 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc"></script>
+
+    <title>设置驾车路线途经点</title>
+</head>
+<body>
+<div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map('allmap');
+    map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+    map.enableScrollWheelZoom(true);
+
+    /*
+    //起点
+    var p1 = new BMap.Point(116.301934,39.977552);
+    //途经点
+    var p2 = new BMap.Point(116.319876,39.943319);//豪柏大厦
+    var p3 = new BMap.Point(116.405628,39.9139721);//天安门
+    var p4 = new BMap.Point(116.455646,39.937433);//体育馆
+    //终点
+    var p5 = new BMap.Point(116.508328,39.919141);
+*/
+    //将28个百度坐标点放入数据中
+    var p1 = new BMap.Point(121.443532,31.24603);
+    var p2 = new BMap.Point(121.481477,31.240103);
+    var p3 = new BMap.Point(121.493262,31.237015);
+    var p4 = new BMap.Point(121.494987,31.230099);
+    var p5 = new BMap.Point(121.489382,31.225034);
+    var p6 = new BMap.Point(121.512953,31.219846);
+    var p7 = new BMap.Point(121.510222,31.228122);
+    var p8 = new BMap.Point(121.520715,31.232198);
+    var p9 = new BMap.Point(121.515828,31.239485);
+    var p10 = new BMap.Point(121.498724,31.238868);
+    var p11 = new BMap.Point(121.496568,31.227505);
+    var p12 = new BMap.Point(121.479177,31.244178);
+    var p13 = new BMap.Point(121.496712,31.249365);
+    var p14 = new BMap.Point(121.503323,31.260972);
+    var p15 = new BMap.Point(121.512953,31.276158);
+    var p16 = new BMap.Point(121.481764,31.26838);
+    var p17 = new BMap.Point(121.464804,31.285293);
+    var p18 = new BMap.Point(121.468685,31.251587);
+    var p19 = new BMap.Point(121.47041,31.245289);
+    var p20 = new BMap.Point(121.489094,31.19106);
+    var p21 = new BMap.Point(121.514534,31.207987);
+    var p22 = new BMap.Point(121.525314,31.178208);
+    var p23 = new BMap.Point(121.533363,31.159422);
+    var p24 = new BMap.Point(121.533363,31.159422);
+    var p25 = new BMap.Point(121.545005,31.203169);
+    var p26 = new BMap.Point(121.562252,31.186364);
+    var p27 = new BMap.Point(121.569295,31.170422);
+    var p28 = new BMap.Point(121.575907,31.15559);
+
+
+    var points = [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15];
+
+    //起点
+    var mp1 = points[0];
+    //终点
+    var mp2 = points[points.length-1];
+
+    map.clearOverlays();                        //清除地图上所有的覆盖物
+
+
+    //创建行车路线规划实例
+    var driving = new BMap.DrivingRoute(map);
+    for(var i = 0;i<points.length;i++){
+        if(i != points.length-1){
+            driving.search(points[i], points[i+1]);  //绘制两个点之间的路线
+        }
+    }
+
+    for (let i = 1;i<points.length-1;i++){
+        let mark = new BMap.Marker(points[i]);
+        map.addOverlay(mark);
+
+
+        let label = new BMap.Label(i.toString(),{position:points[i]});
+        map.addOverlay(label);
+    }
+
+    //显示终点和起点的标注
+    driving.setSearchCompleteCallback(function(){
+        var pts = driving.getResults().getPlan(0).getRoute(0).getPath();
+        //通过驾车实例，获得一系列点的数组
+        var polyline = new BMap.Polyline(pts);
+        map.addOverlay(polyline);
+        var m1 = new BMap.Marker(mp1);         //起点
+        var m2 = new BMap.Marker(mp2);        //终点
+        map.addOverlay(m1);
+        map.addOverlay(m2);
+        var lab1 = new BMap.Label("起点",{position:mp1});
+        var lab2 = new BMap.Label("终点",{position:mp2});
+        map.addOverlay(lab1);
+        map.addOverlay(lab2);
+        setTimeout(function(){
+            map.setViewport(points);
+            //调整到最佳视野
+        },1000);
+    });
+
+
+</script>

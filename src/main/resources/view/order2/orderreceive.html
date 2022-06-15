@@ -1,0 +1,59 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+</head>
+<style>
+    #queryByGarbageName{
+        width: 280px;
+        display: inline-block;
+    }
+
+    .query{
+        margin-left: 10px;
+    }
+    .layui-col-md6{
+        margin-left: 111px;
+        margin-top: 60px;
+    }
+
+</style>
+<body>
+<div class="layui-card-body">
+    <!-- 表格主体 -->
+    <table class="layui-hide" id="userTable" lay-filter="test"></table>
+    <!-- 模板 -->
+    <script type="text/html" id="userTableToolbarDemo">
+        <div class="layui-btn-container">
+            <input  type="text" id="queryByGarbageName" name="queryByGarbageName" autocomplete="off"
+                    placeholder="请输入小区名" class="layui-input layui-btn-sm">
+            <button class="layui-btn layui-btn-sm query" lay-event="query">查询<i class="layui-icon layui-icon-search"></i></button>
+        </div>
+    </script>
+    <script type="text/html" id="userTableBarDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="finishOrder">完成订单<i class="layui-icon layui-icon-edit"></i></a>
+    </script>
+</div>
+<div id="finishOrder1" style="display: none;">
+
+    <div class="layui-col-md6">
+    <div class="layui-form-item">
+        <label class="layui-form-label">实际重量（kg）</label>
+        <div class="layui-input-block">
+            <input type="number" id="rweight" autocomplete="off" placeholder="请输入实际重量"
+                   class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">交易金额（元）</label>
+        <div class="layui-input-block">
+            <input type="number" id="price" autocomplete="off" placeholder="交易金额"
+                   class="layui-input" >
+        </div>
+    </div>
+    </div>
+
+</div>
+</body>
+<script th:src="@{/order2/orderreceive/js/orderreceive.js}"></script>
+</html>

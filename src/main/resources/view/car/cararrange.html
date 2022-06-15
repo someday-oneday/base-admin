@@ -1,0 +1,47 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--    xmlns:th="http://www.thymeleaf.org"-->
+    <script th:replace="common/head::static"></script>
+</head>
+<style>
+.border1{
+    width: 60%;
+    display: inline-block;
+    margin-left: 283px;
+    /*background-color: red;*/
+    border-bottom: 1px solid #DDDDDD;
+}
+.date2{
+    font-size: 17px;
+    margin: 20px 0px;
+    padding: 10px 0px;
+}
+.border1:hover{
+    background-color: aliceblue;
+}
+</style>
+<body>
+<!--<div class="layui-card-body">-->
+<!--    &lt;!&ndash; 表格主体 &ndash;&gt;-->
+<!--    <table class="layui-hide" id="userTable" lay-filter="test"></table>-->
+<!--    &lt;!&ndash; 模板 &ndash;&gt;-->
+<!--    <script type="text/html" id="userTableToolbarDemo">-->
+<!--        <div class="layui-btn-container">-->
+<!--            <input  type="text" id="queryByGarbageName" name="queryByGarbageName" autocomplete="off"-->
+<!--                    placeholder="输入垃圾名" class="layui-input layui-btn-sm">-->
+<!--            <button class="layui-btn layui-btn-sm query" lay-event="query">查询<i class="layui-icon layui-icon-search"></i></button>-->
+<!--        </div>-->
+<!--    </script>-->
+<!--    <script type="text/html" id="userTableBarDemo">-->
+<!--        <a class="layui-btn layui-btn-xs" lay-event="edit">完成订单<i class="layui-icon layui-icon-edit"></i></a>-->
+<!--        &lt;!&ndash;        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除<i class="layui-icon layui-icon-close"></i></a>&ndash;&gt;-->
+<!--    </script>-->
+<!--</div>-->
+
+<div id="main">
+
+</div>
+</body>
+<script th:src="@{/car/car/js/cararrange.js}"></script>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Hello, World</title>
+    <link th:href="@{/sys/authority/css/authority.css}" rel="stylesheet" type="text/css"/>
+
+    <style type="text/css">
+        body,
+        html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        #map1_container,
+        #map2_container {
+            float: left;
+            overflow: hidden;
+            width: 48%;
+            height: 100%;
+            margin: 20px 12px;
+        }
+        #allmap1 {
+            height: 100%;
+            margin: 0 0 3px;
+        }
+        #allmap2 {
+            height: 100%;
+            margin: 3px 0 0;
+        }
+        .text1{
+            text-align: center;
+            margin: 10px;
+        }
+        /*body, html ,#allmap1{*/
+        /*    width: 100%;*/
+        /*    height: 100%;*/
+        /*    overflow: hidden;*/
+        /*    margin:0;*/
+        /*    font-family:"微软雅黑";*/
+        /*}*/
+    /*#allmap1{*/
+    /*    width: 50%;*/
+    /*    height: 50%;*/
+    /*}*/
+        .layui-input{
+            width: 152px;
+        }
+        .layui-form-item{
+            margin-left: -60px;
+        }
+    </style>
+    <!--    <script type="text/javascript"
+    src="//api.map.baidu.com/api?v=2.0&ak=EbGTXaj1OTLd1iR2Su6jppAMWGwYqE6s"></script>-->
+    <!--    <script type="text/javascript"-->
+    <!--            src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc">-->
+    <!--    </script>-->
+</head>
+
+<body>
+
+<!--    <div id="allmap1"></div>-->
+<!--    <div id="allmap2"></div>-->
+<div id="map1_container">
+    <div class="text1">
+
+<!--            <div class="layui-input-block">-->
+<!--                <select name="hid" id="selectHouse1" class="layui-input" >-->
+<!--                </select>-->
+<!--            </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">上午路线规划</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse1" class="layui-input" >
+                </select>
+                <a class="layui-btn" onclick="planRoute1()">规划</a>
+            </div>
+        </div>
+<!--        <select name="hid" id="selectHouse1" >-->
+<!--        </select>-->
+<!--        <div class="layui-input-block">-->
+<!--            <a class="layui-btn" onclick="planRoute1()">规划</a>-->
+
+<!--        </div>-->
+<!--        <button onclick="planRoute1()">规划</button>-->
+    </div>
+    <div id="allmap1"></div>
+</div>
+<div id="map2_container">
+    <div class="text1">
+<!--        <div class="layui-input-block">-->
+<!--            <select name="hid" id="selectHouse2" class="layui-input" >-->
+<!--            </select>-->
+<!--        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">下午路线规划</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse2" class="layui-input" >
+                </select>
+                <a class="layui-btn" onclick="planRoute2()">规划</a>
+
+            </div>
+        </div>
+<!--        <select name="hid" id="selectHouse2"  >-->
+<!--        </select>-->
+<!--        <div class="layui-input-block">-->
+
+<!--        </div>-->
+<!--        <button onclick="planRoute2()">规划</button>-->
+
+    </div>
+    <div id="allmap2"></div>
+</div>
+
+
+
+<script type="text/javascript"
+        src="//api.map.baidu.com/api?v=2.0&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc">
+    </script>
+<script>
+    // // 百度地图API功能
+    // let map = new BMap.Map("allmap");
+    // map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+    // map.enableScrollWheelZoom(true);
+
+    let p111 = new BMap.Point(116.301934,39.977552);
+    let p222 = new BMap.Point(116.508328,39.919141);
+    let p333 = new BMap.Point(116.365942,39.996165);
+    let p444 = new BMap.Point(116.408757,39.995704);
+    // let driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true}});
+    // driving.search(p1, p2,{waypoints:[p3,p4]});//waypoints表示途经点
+
+    let p5 = new BMap.Point(126.63525,45.723026);//科大小区
+    let p6 = new BMap.Point(126.62373898851428,45.73491192445529);//水院小区
+    let p7 = new BMap.Point(126.65168626106595,45.727031696916676);//动源小区
+    let p8 = new BMap.Point(126.65755650791257,45.72163913860326);//友缘小区
+    let p9 = new BMap.Point(126.6613737673467,45.72033346988572);//春江新城
+    let p10 = new BMap.Point(126.65192880355364,45.72096239703702);//盛世闲庭
+    let p11 = new BMap.Point(126.66327952248612,45.71753866928763);//健康家园
+    let p12 = new BMap.Point(126.64192644119161,45.71140885807086);//四季芳洲
+    let p13 = new BMap.Point(126.6681489671641,45.69417958730583);//绿海华庭
+    let p14 = new BMap.Point(126.68758479500866,45.703649858175886);//香林名苑
+    let p15 = new BMap.Point(126.69204622932398,45.699367902359626);//幸福里
+    let p16 = new BMap.Point(126.65206606463556,45.7296614368536);//农林小区
+    let p17 = new BMap.Point(126.6117904472649,45.70205119756269);//哈药小区
+    let p18 = new BMap.Point(126.66350903954394,45.73565989558945);//金房小区
+    let p19 = new BMap.Point(126.66663145966608,45.73759029391682);//四季上东
+    let p20 = new BMap.Point(126.65686103978675,45.7432261039809);//文瑞小区
+    let p21 = new BMap.Point(126.6490518004968,45.72047712641029);//花卉小区
+    let p22 = new BMap.Point(126.6297060726949,45.72672944311473);//利兴小区
+    let p23 = new BMap.Point(126.63246180450788,45.726619715265585);//林海华庭
+    let p24 = new BMap.Point(126.63054769512722,45.72058076275234);//学府花园
+    $.post(ctx + "/info/infohouse/list", {}, function (data) {
+        if(data.flag){
+            $('#selectHouse1').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse1').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+            $('#selectHouse2').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse2').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+        }
+    });
+
+function planRoute1(){
+    $.post(ctx + "/sys/sysUser/getUser", {loginName:window.parent.loginName}, function (data) {
+        //debugger
+        if(data.flag){
+            console.log(data);
+            //debugger
+            $.post(ctx + "/order/order22/list", {
+                companyId:data.data.companyId,
+                gotime:getNowFormatDate(),
+                gotimes:'08:30-11:30'
+            }, function (data1) {
+                if(data1.flag){
+
+                    console.log(data1.data);
+                    // debugger
+                    let citys=new Array(data1.data.length);
+                    for (let i=0;i<data1.data.length;i++){
+                        citys[i]=[Number(data1.data[i].lng),Number(data1.data[i].lat)];
+                    }
+                    console.log(data1);
+                    console.log(citys);
+
+                    let selectHouse11= $("#selectHouse1").val();
+                    $.post(ctx + "/info/infohouse/list", {
+                        hid:selectHouse11,
+                    }, function (data3) {
+                        if(data3.flag){
+                            // console.log(selectHouse11);
+                            console.log(data3);
+                            console.log(Number(data3.data[0].lng));
+                            console.log(Number(data3.data[0].lat));
+                            //debugger
+
+                            Array.prototype.remove = function(index) {
+                                // if (index > -1) {
+                                //     this.splice(index, 1);
+                                // }
+                                let newArray = [];
+                                for(let i = 0 ; i < this.length ; i ++){
+                                    if(index != i){
+                                        newArray.push(this[i]);
+                                    }
+                                }
+                                return newArray;
+                            };
+
+
+                            let pathPoints = [];
+                            let sourcePoints = citys;
+                            let startPoint=[Number(data3.data[0].lng),Number(data3.data[0].lat)];//起点
+                            // let startPoint=[126.65206606463556,45.7296614368536];//起点
+                            function planPath(start,points){
+                                let nearest = 0;
+                                for(let i = 0 ; i < points.length ; i ++ ){
+                                    if((calDistance(start,points[nearest]) - calDistance(start,points[i])) >= 0){
+                                        nearest = i;
+                                    }
+                                }
+                                pathPoints.push(points[nearest]);
+                                if(pathPoints.length == sourcePoints.length + 1){
+                                    return;
+                                }else{
+                                    let nearest_points = points[nearest];
+                                    points = points.remove(nearest);
+                                    planPath(nearest_points,points);
+                                }
+                            }
+
+                            function calDistance(p1,p2){
+
+                                return Math.sqrt(Math.pow((p2[0]-p1[0]),2) + Math.pow((p2[1]-p1[1]),2) )
+                            }
+                            function test(start,points){
+                                pathPoints.push(start);
+                                planPath(start,points);
+                            }
+
+                            test(startPoint,sourcePoints);
+                            console.log(pathPoints);
+                            console.log(pathPoints.length);
+
+                            let midPoints=[];//途经点（不算起点、终点）
+                            let midPointsnum=[];//途经点，数字
+                            for (let i=0;i<pathPoints.length-2;i++){
+                                let p3 = new BMap.Point(pathPoints[i+1][0],pathPoints[i+1][1]);
+                                midPoints[i]=p3;
+                                midPointsnum[i]=pathPoints[i+1];
+                            }
+
+                            // 百度地图API功能
+                            let map1 = new BMap.Map("allmap1");
+                            map1.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                            map1.enableScrollWheelZoom(true);
+                            let p1 = new BMap.Point(startPoint[0],startPoint[1]);//起点
+                            let p2 = new BMap.Point(pathPoints[pathPoints.length-1][0],pathPoints[pathPoints.length-1][1]);//终点
+                            let driving1 = new BMap.DrivingRoute(map1, {renderOptions:{map: map1, autoViewport: true}});
+                            driving1.search(p1, p2,{waypoints:midPoints});//waypoints表示途经点
+
+
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+    function planRoute2(){
+        $.post(ctx + "/sys/sysUser/getUser", {loginName:window.parent.loginName}, function (data) {
+            //debugger
+            if(data.flag){
+                console.log(data);
+                //debugger
+                $.post(ctx + "/order/order22/list", {
+                    companyId:data.data.companyId,
+                    gotime:getNowFormatDate(),
+                    // gotimes:'08:30-11:30',
+                    gotimes:'14:30-18:30',
+                }, function (data1) {
+                    if(data1.flag){
+
+                        console.log(data1.data);
+                        // debugger
+                        let citys=new Array(data1.data.length);
+                        for (let i=0;i<data1.data.length;i++){
+                            citys[i]=[Number(data1.data[i].lng),Number(data1.data[i].lat)];
+                        }
+                        console.log(data1);
+                        console.log(citys);
+
+                        let selectHouse11= $("#selectHouse2").val();
+                        $.post(ctx + "/info/infohouse/list", {
+                            hid:selectHouse11,
+                        }, function (data3) {
+                            if(data3.flag){
+                                // console.log(selectHouse11);
+                                console.log(data3);
+                                console.log(Number(data3.data[0].lng));
+                                console.log(Number(data3.data[0].lat));
+                                //debugger
+
+                                Array.prototype.remove = function(index) {
+                                    // if (index > -1) {
+                                    //     this.splice(index, 1);
+                                    // }
+                                    let newArray = [];
+                                    for(let i = 0 ; i < this.length ; i ++){
+                                        if(index != i){
+                                            newArray.push(this[i]);
+                                        }
+                                    }
+                                    return newArray;
+                                };
+
+
+                                let pathPoints = [];
+                                let sourcePoints = citys;
+                                let startPoint=[Number(data3.data[0].lng),Number(data3.data[0].lat)];//起点
+                                // let startPoint=[126.65206606463556,45.7296614368536];//起点
+                                function planPath(start,points){
+                                    let nearest = 0;
+                                    for(let i = 0 ; i < points.length ; i ++ ){
+                                        if((calDistance(start,points[nearest]) - calDistance(start,points[i])) >= 0){
+                                            nearest = i;
+                                        }
+                                    }
+                                    pathPoints.push(points[nearest]);
+                                    if(pathPoints.length == sourcePoints.length + 1){
+                                        return;
+                                    }else{
+                                        let nearest_points = points[nearest];
+                                        points = points.remove(nearest);
+                                        planPath(nearest_points,points);
+                                    }
+                                }
+
+                                function calDistance(p1,p2){
+
+                                    return Math.sqrt(Math.pow((p2[0]-p1[0]),2) + Math.pow((p2[1]-p1[1]),2) )
+                                }
+                                function test(start,points){
+                                    pathPoints.push(start);
+                                    planPath(start,points);
+                                }
+
+                                test(startPoint,sourcePoints);
+                                console.log(pathPoints);
+                                console.log(pathPoints.length);
+
+                                let midPoints=[];//途经点（不算起点、终点）
+                                let midPointsnum=[];//途经点，数字
+                                for (let i=0;i<pathPoints.length-2;i++){
+                                    let p3 = new BMap.Point(pathPoints[i+1][0],pathPoints[i+1][1]);
+                                    midPoints[i]=p3;
+                                    midPointsnum[i]=pathPoints[i+1];
+                                }
+
+                                // 百度地图API功能
+                                let map2 = new BMap.Map("allmap2");
+                                map2.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                                map2.enableScrollWheelZoom(true);
+                                let p1 = new BMap.Point(startPoint[0],startPoint[1]);//起点
+                                let p2 = new BMap.Point(pathPoints[pathPoints.length-1][0],pathPoints[pathPoints.length-1][1]);//终点
+                                let driving2 = new BMap.DrivingRoute(map2, {renderOptions:{map: map2, autoViewport: true}});
+                                driving2.search(p1, p2,{waypoints:midPoints});//waypoints表示途经点
+
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+    $.post(ctx + "/sys/sysUser/getUser", {loginName:window.parent.loginName}, function (data) {
+        //debugger
+        if(data.flag) {
+            console.log(data);
+            //debugger
+            $.post(ctx + "/order/order22/list", {
+                companyId: data.data.companyId,
+                gotime: getNowFormatDate(),
+                gotimes: '08:30-11:30'
+            }, function (data1) {
+                if (data1.flag) {
+
+                    console.log(data1.data);
+                    // debugger
+                    let citys = new Array(data1.data.length);
+                    for (let i = 0; i < data1.data.length; i++) {
+                        citys[i] = [Number(data1.data[i].lng), Number(data1.data[i].lat)];
+                    }
+                    console.log(data1);
+                    console.log(citys);
+
+                    let selectHouse11 = $("#selectHouse1").val();
+                    $.post(ctx + "/info/infohouse/list", {
+                        hid: selectHouse11,
+                    }, function (data3) {
+                        if (data3.flag) {
+                            // console.log(selectHouse11);
+                            console.log(data3);
+                            console.log(Number(data3.data[0].lng));
+                            console.log(Number(data3.data[0].lat));
+                            //debugger
+
+                            Array.prototype.remove = function (index) {
+                                // if (index > -1) {
+                                //     this.splice(index, 1);
+                                // }
+                                let newArray = [];
+                                for (let i = 0; i < this.length; i++) {
+                                    if (index != i) {
+                                        newArray.push(this[i]);
+                                    }
+                                }
+                                return newArray;
+                            };
+
+
+                            let pathPoints = [];
+                            let sourcePoints = citys;
+                            let startPoint = [Number(data3.data[0].lng), Number(data3.data[0].lat)];//起点
+                            // let startPoint=[126.65206606463556,45.7296614368536];//起点
+                            function planPath(start, points) {
+                                let nearest = 0;
+                                for (let i = 0; i < points.length; i++) {
+                                    if ((calDistance(start, points[nearest]) - calDistance(start, points[i])) >= 0) {
+                                        nearest = i;
+                                    }
+                                }
+                                pathPoints.push(points[nearest]);
+                                if (pathPoints.length == sourcePoints.length + 1) {
+                                    return;
+                                } else {
+                                    let nearest_points = points[nearest];
+                                    points = points.remove(nearest);
+                                    planPath(nearest_points, points);
+                                }
+                            }
+
+                            function calDistance(p1, p2) {
+
+                                return Math.sqrt(Math.pow((p2[0] - p1[0]), 2) + Math.pow((p2[1] - p1[1]), 2))
+                            }
+
+                            function test(start, points) {
+                                pathPoints.push(start);
+                                planPath(start, points);
+                            }
+
+                            test(startPoint, sourcePoints);
+                            console.log(pathPoints);
+                            console.log(pathPoints.length);
+
+                            let midPoints = [];//途经点（不算起点、终点）
+                            let midPointsnum = [];//途经点，数字
+                            for (let i = 0; i < pathPoints.length - 2; i++) {
+                                let p3 = new BMap.Point(pathPoints[i + 1][0], pathPoints[i + 1][1]);
+                                midPoints[i] = p3;
+                                midPointsnum[i] = pathPoints[i + 1];
+                            }
+
+                            // 百度地图API功能
+                            let map1 = new BMap.Map("allmap1");
+                            map1.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                            map1.enableScrollWheelZoom(true);
+                            let p1 = new BMap.Point(startPoint[0], startPoint[1]);//起点
+                            let p2 = new BMap.Point(pathPoints[pathPoints.length - 1][0], pathPoints[pathPoints.length - 1][1]);//终点
+                            let driving1 = new BMap.DrivingRoute(map1, {
+                                renderOptions: {
+                                    map: map1,
+                                    autoViewport: true
+                                }
+                            });
+                            driving1.search(p1, p2, {waypoints: midPoints});//waypoints表示途经点
+
+                            console.log('1111111111111111111111111111');
+                            console.log(midPointsnum);//途经点
+                            console.log(startPoint);//起点
+                            console.log(startPoint[0]);
+                            console.log(startPoint[1]);
+                            console.log('2222222222222222222222222222');
+                            console.log(pathPoints[pathPoints.length - 1]);//终点
+                            console.log(pathPoints[pathPoints.length - 1][0]);
+                            console.log(pathPoints[pathPoints.length - 1][1]);
+
+                        }
+                    });
+                }
+            });
+
+            $.post(ctx + "/order/order22/list", {
+                companyId: data.data.companyId,
+                gotime: getNowFormatDate(),
+                gotimes:'14:30-18:30'
+                // gotimes: '08:30-11:30'
+            }, function (data1) {
+                if (data1.flag) {
+
+                    console.log(data1.data);
+                    // debugger
+                    let citys = new Array(data1.data.length);
+                    for (let i = 0; i < data1.data.length; i++) {
+                        citys[i] = [Number(data1.data[i].lng), Number(data1.data[i].lat)];
+                    }
+                    console.log(data1);
+                    console.log(citys);
+
+                    let selectHouse11 = $("#selectHouse2").val();
+                    $.post(ctx + "/info/infohouse/list", {
+                        hid: selectHouse11,
+                    }, function (data3) {
+                        if (data3.flag) {
+                            // console.log(selectHouse11);
+                            console.log(data3);
+                            console.log(Number(data3.data[0].lng));
+                            console.log(Number(data3.data[0].lat));
+                            //debugger
+
+                            Array.prototype.remove = function (index) {
+                                // if (index > -1) {
+                                //     this.splice(index, 1);
+                                // }
+                                let newArray = [];
+                                for (let i = 0; i < this.length; i++) {
+                                    if (index != i) {
+                                        newArray.push(this[i]);
+                                    }
+                                }
+                                return newArray;
+                            };
+
+
+                            let pathPoints = [];
+                            let sourcePoints = citys;
+                            let startPoint = [Number(data3.data[0].lng), Number(data3.data[0].lat)];//起点
+                            // let startPoint=[126.65206606463556,45.7296614368536];//起点
+                            function planPath(start, points) {
+                                let nearest = 0;
+                                for (let i = 0; i < points.length; i++) {
+                                    if ((calDistance(start, points[nearest]) - calDistance(start, points[i])) >= 0) {
+                                        nearest = i;
+                                    }
+                                }
+                                pathPoints.push(points[nearest]);
+                                if (pathPoints.length == sourcePoints.length + 1) {
+                                    return;
+                                } else {
+                                    let nearest_points = points[nearest];
+                                    points = points.remove(nearest);
+                                    planPath(nearest_points, points);
+                                }
+                            }
+
+                            function calDistance(p1, p2) {
+
+                                return Math.sqrt(Math.pow((p2[0] - p1[0]), 2) + Math.pow((p2[1] - p1[1]), 2))
+                            }
+
+                            function test(start, points) {
+                                pathPoints.push(start);
+                                planPath(start, points);
+                            }
+
+                            test(startPoint, sourcePoints);
+                            console.log(pathPoints);
+                            console.log(pathPoints.length);
+
+                            let midPoints = [];//途经点（不算起点、终点）
+                            let midPointsnum = [];//途经点，数字
+                            for (let i = 0; i < pathPoints.length - 2; i++) {
+                                let p3 = new BMap.Point(pathPoints[i + 1][0], pathPoints[i + 1][1]);
+                                midPoints[i] = p3;
+                                midPointsnum[i] = pathPoints[i + 1];
+                            }
+
+                            // 百度地图API功能
+                            let map2 = new BMap.Map("allmap2");
+                            map2.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+                            map2.enableScrollWheelZoom(true);
+                            let p1 = new BMap.Point(startPoint[0], startPoint[1]);//起点
+                            let p2 = new BMap.Point(pathPoints[pathPoints.length - 1][0], pathPoints[pathPoints.length - 1][1]);//终点
+                            let driving2 = new BMap.DrivingRoute(map2, {
+                                renderOptions: {
+                                    map: map2,
+                                    autoViewport: true
+                                }
+                            });
+                            driving2.search(p1, p2, {waypoints: midPoints});//waypoints表示途经点
+
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function getNowFormatDate() {
+        let date = new Date();
+        let seperator1 = "-";
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        let currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
+    }
+
+    //  成都          lat:30.656113902327164   lng:104.09316899220372
+    //  天津          lat:39.09110259843554   lng:117.2080927529767
+    //  上海          lat:31.240776068850483   lng: 121.48486824358186
+    //  内蒙古呼伦贝尔          lat:49.172732795190655   lng:119.78486907317954
+    // 北京市海淀区 lat:39.96548984110075   lng:116.3054340544974
+    // 郑州       lat:34.75343885045448    lng:113.63141920733915
+    //广州       lat:23.176519730333403      lng:113.2292586855273
+    // 30.656,104.093|39.091,117.208|31.240,121.484
+    //起点：内蒙  终点：广州
+    //内蒙——郑州——北京——广州   49——34——39——23
+    //内蒙古——北京——郑州——广州（最优）49-39-34-23
+    //地图：
+    //创建地址解析器实例
+    // var myGeo = new BMapGL.Geocoder();
+    // // 将地址解析结果显示在地图上，并调整地图视野
+    // myGeo.getPoint('广州', function(point){
+    //     if(point){
+    //         map.centerAndZoom(point, 16);
+    //         map.addOverlay(new BMapGL.Marker(point, {title: '北京市海淀区上地10街'}))
+    //     console.log(point);
+    //     }else{
+    //         alert('您选择的地址没有解析到结果！');
+    //     }
+    // }, '广州')
+
+    //行车路线规划（起点，终点）
+    // var p1 = new BMapGL.Point(116.301934, 39.977552);
+    // var p2 = new BMapGL.Point(116.508328, 39.919141);
+    //
+    // var driving = new BMapGL.DrivingRoute(map, {renderOptions: {map: map, autoViewport: true}});
+    // driving.search(p1, p2);
+
+
+    //创建地址解析器实例
+    // var myGeo = new BMapGL.Geocoder();
+    // // 将地址解析结果显示在地图上，并调整地图视野
+    // let arr=['花卉小区','哈药小区','幸福里','香林名苑','绿海华庭','四季芳洲','健康家园','盛世闲庭','春江新城','友缘小区','动源小区','水院小区','盛世桃园'];
+    // for(let i=0;i<arr.length;i++) {
+    //
+    //     myGeo.getPoint(arr[i], function (point) {
+    //         console.log(arr[i]);
+    //         console.log(point);
+    //
+    //         if (point) {
+    //             map.centerAndZoom(point, 16);
+    //             map.addOverlay(new BMapGL.Marker(point, {title: '北京市海淀区上地10街'}))
+    //         } else {
+    //             alert('您选择的地址没有解析到结果！');
+    //         }
+    //     }, '哈尔滨市')
+    // }
+</script>
+</body>
+</html>

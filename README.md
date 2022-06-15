@@ -1,9 +1,9 @@
-## 官网<br/> 
-https://huanzi-qch.gitee.io/base-admin <br/> 
 
 ## 简介<br/> 
-Base Admin一套简单通用的后台管理系统<br/> 
-这套Base Admin是一套简单通用的后台管理系统，主要功能有：权限管理、菜单管理、用户管理，系统设置、实时日志，实时监控，API加密，以及登录用户修改密码、配置个性菜单等<br/> 
+Base Admin城市垃圾分类回收管理系统（毕设）<br/> 
+该系统功能模块包括：基本信息管理、订单管理、行程管理、数据统计、公告留言、系统管理<br/>
+角色包括：超级管理员、普通用户（城市居民为主）、垃圾回收单位<br/>
+该项目是基于通用后台管理系统改造，下面介绍均为原始系统，数据库文件在下面<br/>
 
 ## 技术栈<br/> 
 前端：layui<br/> 
@@ -37,6 +37,7 @@ java后端：SpringBoot + Thymeleaf + WebSocket + Spring Security + SpringData-J
 原因：没有好好看文档，建议先好好看下博客介绍，博客文末“代码开源”处已经早有说明
 
 解决：base_admin.sql文件在resources/static/sql下面
+城市垃圾回收管理系统数据库文件同在resources/static/sql下面
 ```
 3、如何启动程序？
 ```text

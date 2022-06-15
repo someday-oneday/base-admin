@@ -32,6 +32,7 @@ public class CommonController<V, E, T> {
     @Decrypt
     @Encrypt
     public Result<PageInfo<V>> page(V entityVo) {
+
         return commonService.page(entityVo);
     }
 
@@ -51,7 +52,16 @@ public class CommonController<V, E, T> {
     @Decrypt
     @Encrypt
     public Result<V> save(V entityVo) {
+
         return commonService.save(entityVo);
+    }
+
+    @PostMapping("saveUser")
+    @Decrypt
+    @Encrypt
+    public Result<V> saveUser(V entityVo) {
+
+        return commonService.saveUser(entityVo);
     }
 
     @DeleteMapping("delete/{id}")

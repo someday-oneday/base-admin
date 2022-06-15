@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        function buildDistsArrays(xCoors, yCoors){
+            let maxDist = -1;
+            let distance = new Array(xCoors.length);
+            for(let i=0;i<xCoors.length;i++){        //一维长度
+                distance[i] = new Array(xCoors.length);
+                for(let j=0;j<xCoors.length;j++){    //二维长度
+                    distance[i][j] = 1000000;
+                }
+            }
+            for (let i = 0; i < xCoors.length; i++){
+                distance[i][i] = 0;// 对角线为0
+                for (let j = i + 1; j < xCoors.length; j++){
+                    distance[i][j] = EUC_2D_dist(xCoors[i], xCoors[j], yCoors[i], yCoors[j]);
+                    distance[j][i] = distance[i][j];
+                    if (distance[i][j] > maxDist) {
+                        maxDist = distance[i][j];
+                    }
+                }
+            }
+            return distance;
+        }
+
+
+function cost(rout,distance) {//计算该点序列的路径总长度
+    let sum = 0;
+    for (let i = 0; i < rout.length-1; i++) {
+        sum += distance[ rout[i] ][ rout[i+1] ];
+    }
+    return sum;
+}
+
+function copyRout( rout) {//复制路经
+    let out = new Array(rout.length);
+    for (let i = 0; i < rout.length; i++)
+    out[i] = rout[i];
+    return out;
+}
+
+/**
+ * 实现交叉互换，随机出两个不相同随机数，然后交换那两个位置的点
+ * @param rout
+ * @return 输出经过交换的新路径
+ */
+function swap(rout) {
+    let x,y;
+    x=rout.length - 1;
+    y=1;
+    let r1 = parseInt(Math.random() * (x - y + 1) + y);//生成随机数0 ~ rout.length-1
+    let r2 = parseInt(Math.random() * (x - y + 1) + y);
+    while (r1===r2) {
+        r2 = parseInt(Math.random() * (x - y + 1) + y);//两个随机数不能相同
+    }
+    let change = copyRout(rout);
+    let tmp = change[r1];
+    change[r1] = change[r2];
+    change[r2] = tmp;
+    return change;//输出交换任意两点后的点序列
+}
+
+        function BFS(xCoors,distance) {
+            //初始队列放入0，vis[0]=1
+            let q = [];
+            q.push(0);
+
+            let vis = new Array(xCoors.length);//已被访问结点数组，访问=1，未访问=0
+            for(let i = 0; i < xCoors.length; i++){
+                vis[i] = 0;
+            }
+            let out = new Array(xCoors.length);//排好序后的节点数组
+            out[0] = 0;
+            vis[0] = 1;//第一个点标记为已访问
+            let totalDist = 0;//现已加入的点的总距离
+            let index = 1;//第2个节点的索引号
+            while (q.length !== 0) {
+                //只有还有未被访问的结点，则继续循环，直至所有节点都被访问过
+                let front = q.pop();//获取首结点，并删除该节点
+                let min = 100000;//min为两点间最短距离，Integer.MAX_VALUE：int数据类型的最大值
+                let sIdx = 0;
+                //获取队列的首结点font，找到与该节点距离最近的点i（该点未被访问，即vis[i]==0，且不是自己，即i!=font）
+                for (let i = 0; i < xCoors.length; i++) {
+                    if (vis[i] === 0 && i !== front && min > distance[front][i]) {
+                        min = distance[front][i];//两点最短距离
+                        sIdx = i;//记录距离最短点的坐标
+                    }
+                }
+                if (min !== 100000) {
+                    vis[sIdx] = 1;//将距离最近的点标记为已访问
+                    q.push(sIdx);//将该点加入队列
+                    out[index] = sIdx;//将该点加入排好序后的数组，index=1起
+                    index++;
+                    totalDist += distance[front][sIdx];//现已加入的点的总距离
+                }
+            }
+            q = null;//队列赋值为空
+
+            return out;//返回排好序的节点坐标
+        }
+/**
+ * 模拟退火算法SA
+ * @param rout	输入用于迭代的路径
+ * @param T0	初始温度
+ * @param d	温度衰减率，0.98
+ * @param Tk	最低温度
+ * @param L		内循环次数
+ * @return	输出得到的最优路径
+ */
+function Sa_TSP(rout,distance, T0, d, Tk, L) {
+    let bestpath, curentpath;//最佳、当前路经
+    let t = T0;//当前温度=初始温度
+    bestpath = curentpath = copyRout(rout);
+    while (t > Tk) {//当前温度>最低温度
+        let it=0;//内循环次数初值为0
+        while (it<L) {
+            let update_path = swap(curentpath);//更新路经
+            let delta = cost(update_path, distance) - cost(curentpath, distance);
+            //计算更新后的路经结果成本与更新前（当前）路经结果成本的差值
+            if (delta < 0) {//为负值，即结果成本降低了，则接受
+                curentpath = update_path;
+                bestpath = update_path;
+            } else {
+                //若为正值，则以一定的概率接收
+                let p = Math.exp(-delta/t);//接收概率（取决于当前温度和两次路经结果的差值）
+                if (Math.random() <= p) {
+                    //random.nextDouble()：生成一个大于等于0.0小于1.0的浮点数
+                    //若接收概率大于生成的随机数，则接收更新后的路径
+                    curentpath = update_path;
+                }
+            }
+            it++;
+        }
+        t *=d;
+    }
+    return bestpath;
+}
+
+function print(rout,distance) {
+    console.log("总长度：" + cost(rout,distance));
+    console.log("总路线：" + rout[0]);
+    for (let i = 1; i < rout.length; i++) {
+        console.log("->" + rout[i]);
+    }
+}
+
+//输入排好序的点序列，点的名称，横纵坐标，输出排好序的点对象数组（名称，横坐标，纵坐标）
+function printPoint(rout, nameRout, xRout, yRout){
+    let points = [];
+    for (let i = 0 ; i < rout.length; i++){
+        let point = {};
+        point.name = nameRout[rout[i]];
+        point.x = xRout[rout[i]];
+        point.y = yRout[rout[i]];
+        points.push(point);
+    }
+    return points;
+}
+
+function EUC_2D_dist( x1, x2, y1, y2) {
+    return  Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
+        //去重复元素（输出标记nameRout,重复1，不重复0）
+        //3个数组，点的名字（地点名），横坐标，纵坐标
+        //输出重复数组标记
+function eliminateDuplicate(nameRout, xRout, yRout){
+    let nameRout1 = [];//记录重复元素
+    for (let i = 0; i < nameRout.length;i++){
+        nameRout1[i] = 0;
+    }
+    for (let i = 1; i < nameRout.length; i++){
+        for (let j=0 ;j < i;j++){
+            if(nameRout[i] === nameRout[j] && xRout[i] === xRout[j] && yRout[i] === yRout[j]){
+                nameRout1[i] = 1;//有重复，记为1
+            }
+        }
+    }
+    return nameRout1;
+}
+
+//nameRout1:标记重复的数组，1重复，0不重复
+        //rout：原始数组
+        //输出去重后的rout
+function changeArray(nameRout1, rout){
+    let changeRout = [];
+    for (let i = 0;i < nameRout1.length; i++){
+        if(nameRout1[i] === 0){
+            changeRout.push(rout[i]);
+        }
+    }
+    return changeRout;
+}
+        window.onload = function (){
+            let x1 = [9,9,4,4,4,1,7,2,9];
+            let y1 = [10,1,4,4,4,6,7,8,9];
+            // let x1 = [2,3,3];
+            // let y1 = [1,1,1];
+            let name1 = [1,1,3,3,5,6,7,8,9];
+            let nameRout2 = eliminateDuplicate(name1,x1,y1);//标记重复数组元素
+            console.log("输出namerout2");
+            console.log(nameRout2);
+            console.log(name1);
+            console.log(x1);
+            console.log(y1);
+            console.log("=============");
+            //去重后的数组
+            let name2 = changeArray(nameRout2, name1);//地点名数组
+            let x2 = changeArray(nameRout2, x1);//横坐标
+            let y2 = changeArray(nameRout2, y1);//纵坐标
+            console.log("输出去重后的数组");
+            console.log(name2);
+            console.log(x2);
+            console.log(y2);
+            console.log("=============");
+            let distanceList = buildDistsArrays(x2, y2);
+            let rout = BFS(x2,distanceList);//排好序的点下标（贪心）
+            for (let i = 0;i < rout.length;i++){
+                console.log(rout[i] + "->");
+            }
+            console.log("------------");
+
+            let T0=1e6;
+            let d=0.99;
+            let Tk=1e-6;
+            let L = 20*rout.length;//内循环次数
+            let rout2 = Sa_TSP(rout, distanceList, T0, d, Tk, L);
+            print(rout2, distanceList);
+            let points = printPoint(rout2, name2, x2, y2);
+            console.log("排好序后的点对象数组：");
+            console.log(points);
+        }
+    </script>
+
+</head>
+<body>
+2
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:replace="common/head::static"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>路线规划：垃圾回收处理站</title>
+    <link th:href="@{/sys/authority/css/authority.css}" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+        body,
+        html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        #map1_container{
+            float: left;
+            overflow: hidden;
+            width: 48%;
+            height: 100%;
+            margin: 20px 12px;
+        }
+        #allmap1 {
+            height: 100%;
+            margin: 0 0 3px;
+        }
+        .text1{
+            text-align: center;
+            margin: 10px;
+        }
+        .layui-input{
+            width: 152px;
+        }
+        .layui-form-item{
+            margin-left: -60px;
+        }
+
+        .layui-form-label{
+            width: 244px !important;
+            margin-left: 71px;
+        }
+        #output4,#output5{
+            width: 500px;
+            height: 50px;
+        }
+        #map1_container,
+        #map2_container {
+            float: left;
+            overflow: hidden;
+            width: 48%;
+            height: 100%;
+            margin: 20px 12px;
+        }
+
+        #output4{
+            padding-left: 94px;
+            padding-top: 38px;
+        }
+        #output5{
+            padding-left: 94px;
+        }
+        .layui-btn{
+            margin-top: 17px;
+            margin-left: 261px;
+        }
+        #allmap1{
+            width: 528px;
+            height: 500px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="map1_container">
+    <div class="text1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择起点</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse1" class="layui-input" >
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择回收处理垃圾种类</label>
+            <div class="layui-input-block">
+                <select name="gid" id="selectGarbage" class="layui-input" >
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择终点</label>
+            <div class="layui-input-block">
+                <select name="hid" id="selectHouse2" class="layui-input" >
+                </select>
+            </div>
+            <a class="layui-btn" onclick="planRoute3()">规划</a>
+            <div id="output4"></div>
+            <div id="output5"></div>
+
+        </div>
+
+    </div>
+</div>
+<div id="map2_container">
+
+    <div id="allmap1"></div>
+</div>
+
+
+<div id="allmap3" style="display: none"></div>
+
+<script type="text/javascript"
+        src="//api.map.baidu.com/api?v=2.0&ak=qgrzCLiUA9YOoqVU7WBvGBOPFTop21Gc">
+</script>
+<script>
+
+
+
+    $.post(ctx + "/info/infohouse/list", {}, function (data) {
+        if(data.flag){
+            $('#selectHouse1').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse1').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+            $('#selectHouse2').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectHouse2').append(' <option value="'+data.data[i].hid+'">'+data.data[i].hname+'</option>');
+            }
+        }
+    });
+
+    $.post(ctx + "/info/infogarbage/list", {}, function (data) {
+        if(data.flag){
+            $('#selectGarbage').empty();
+            for(let i = 0 ; i < data.data.length ; i ++){
+                $('#selectGarbage').append(' <option value="'+data.data[i].gid+'">'+data.data[i].gname+'</option>');
+            }
+        }
+    });
+
+
+    let map4 = new BMap.Map("allmap1");
+    map4.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+    map4.enableScrollWheelZoom(true);
+
+    let map5 = new BMap.Map("allmap3");
+    map5.centerAndZoom(new BMap.Point(126.692, 45.699), 11);
+    map5.enableScrollWheelZoom(true);
+
+    let routeList = [];//三个点，起点，途经点，终点（对象数组）
+    let siteGarbageList = [];//所有途经点
+
+
+    function planRoute3() {
+
+
+        let selectHouse1 = $("#selectHouse1").val();//起点
+        let selectHouse2 = $("#selectHouse2").val();//终点
+        let selectHouse3 = $("#selectGarbage").val();//垃圾回收站点
+
+        // console.log("++++++++++");
+        // console.log(selectHouse1);
+        // console.log(selectHouse2);
+        // console.log(selectHouse3);
+        //起点坐标
+        $.post(ctx + "/info/infohouse/list", {
+            hid: selectHouse1,
+        }, function (data) {
+            if (data.flag) {
+                let routeObject = new Object();
+                routeObject.id = data.data[0].hid;
+                routeObject.name = data.data[0].hname;
+                routeObject.lat = data.data[0].lat;
+                routeObject.lng = data.data[0].lng;
+                routeObject.description = data.data[0].hdescription;
+                routeList[0] = routeObject;
+                // console.log(routeObject);
+                // debugger
+            }
+        });
+        //终点坐标
+        $.post(ctx + "/info/infohouse/list", {
+            hid: selectHouse2,
+        }, function (data) {
+            if (data.flag) {
+                let routeObject = new Object();
+                routeObject.id = data.data[0].hid;
+                routeObject.name = data.data[0].hname;
+                routeObject.lat = data.data[0].lat;
+                routeObject.lng = data.data[0].lng;
+                routeObject.description = data.data[0].hdescription;
+                routeList[2] = routeObject;
+                // console.log(routeObject);
+                // debugger
+            }
+        });
+        //获取特定垃圾的回收站点
+        $.post(ctx + "/info/infosite/list", {
+            siteGarbage: selectHouse3,
+        }, function (data) {
+            if (data.flag) {
+
+                for (let i = 0; i < data.data.length; i++) {
+                    let point = new Object();
+                    point.id = data.data[i].siteId;
+                    point.name = data.data[i].siteName;
+                    point.lat = data.data[i].siteLat;
+                    point.lng = data.data[i].siteLng;
+                    point.description = data.data[i].siteDescription;
+                    siteGarbageList[i] = point;
+                }
+                console.log("===========");
+                console.log(siteGarbageList);
+                console.log(routeList);
+
+                //找出最短的途经点：起点，途经点，返回最短的途经点对象
+                let min = 0; //标记最短的途经点下标
+                let sum = 1000000;  //两点间距离
+                for (let i = 0; i < siteGarbageList.length; i++) {
+                    let distancepoints1 = distance(routeList[0].lat, routeList[0].lng, siteGarbageList[i].lat, siteGarbageList[i].lng);
+                    let distancepoints2 = distance(routeList[2].lat, routeList[2].lng, siteGarbageList[i].lat, siteGarbageList[i].lng);
+                    let distancepoints = distancepoints1 + distancepoints2;
+                    console.log("距离：" + distancepoints);
+                    if (distancepoints < sum) {
+                        min = i;
+                        sum = distancepoints;
+                    }
+                }
+
+                let routeObject = new Object();
+                routeObject.id = siteGarbageList[min].id;
+                routeObject.name = siteGarbageList[min].name;
+                routeObject.lat = siteGarbageList[min].lat;
+                routeObject.lng = siteGarbageList[min].lng;
+                routeObject.description = siteGarbageList[min].description;
+                routeList[1] = routeObject;
+                console.log(routeList);
+
+                let p1 = new BMap.Point(routeList[0].lng, routeList[0].lat);//起点
+                let p2 = new BMap.Point(routeList[2].lng, routeList[2].lat);//终点
+                let p3 = new BMap.Point(routeList[1].lng, routeList[1].lat);//途经点
+                map4.clearOverlays();
+                let driving1 = new BMap.DrivingRoute(map4,
+                    {renderOptions: {map: map4, autoViewport: true}});
+                driving1.search(p1, p2, {waypoints: [p3]});//waypoints表示途经点
+
+                getduration(p1,p2,map5,routeList[0].name,routeList[1].name,"output4");
+                getduration(p2,p3,map5,routeList[1].name,routeList[2].name,"output5");
+
+
+
+                //两点间直线距离
+                function distance(x1, y1, x2, y2) {
+                    return Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+                }
+
+                function G(id) {
+                    return document.getElementById(id);
+                }
+
+                //返回两点实际距离，时间
+                function getduration(point1, point2, map, pointname1, pointname2,showpoint) {
+                    //var startdm = G("suggestId").innerHTML;
+                    //var enddm = G("suggestId2").innerHTML;
+                    var output = pointname1 + "->" + pointname2 + " ：驾车需要";
+                    var searchComplete = function (results) {
+                        if (transit.getStatus() != BMAP_STATUS_SUCCESS) {
+                            return;
+                        }
+                        var plan = results.getPlan(0);
+                        output += plan.getDuration(true) + "\n";                //获取时间
+                        output += "，总路程为";
+                        output += plan.getDistance(true) + "\n";             //获取距离
+                        G(showpoint).innerHTML = output;
+                        // $('#output').css('display','block');
+                        // $('#output').html(output);
+                    }
+                    let transit = new BMap.DrivingRoute(map, {
+                        renderOptions: {map: map},
+                        onSearchComplete: searchComplete,
+                        onPolylinesSet: function () {
+                            // setTimeout(function () { alert(output) }, "1000");
+                        }
+                    });
+                    transit.search(point1, point2);
+                }
+
+
+            }
+        })
+
+
+
+    }
+
+
+</script>
+</body>
+</html>

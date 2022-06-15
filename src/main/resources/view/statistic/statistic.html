@@ -1,0 +1,289 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--    xmlns:th="http://www.thymeleaf.org"-->
+    <script th:replace="common/head::static"></script>
+        <meta charset="utf-8">
+
+    <script th:src="@{/statistic/lib/simpleRequire.js}"></script>
+        <script th:src="@{/statistic/lib/config.js}"></script>
+<!--        <script th:src="@{/statistic/lib/jquery.min.js}"></script>-->
+        <script th:src="@{/statistic/lib/facePrint.js}"></script>
+        <script th:src="@{/statistic/lib/testHelper.js}"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+</head>
+<style>
+    /*h1 {*/
+    /*    line-height: 60px;*/
+    /*    height: 60px;*/
+    /*    background: #146402;*/
+    /*    text-align: center;*/
+    /*    font-weight: bold;*/
+    /*    color: #eee;*/
+    /*    font-size: 14px;*/
+    /*}*/
+
+    .chart{
+        height: 500px;
+
+    }
+    .main > div{
+        display: inline-block;
+        width: 48%;
+    }
+
+</style>
+<body>
+<div class="main">
+    <div id="statistic1" class="chart"></div>
+    <div id="statistic2" class="chart"></div>
+</div>
+
+
+</body>
+<script>
+    let xarray1 = [];
+    let yarray1 = [];
+    let xarray2 = [];
+    let yarray2 = [];
+    let array2=[];
+    $.post(ctx + "/info/infocompany/findSysUserCompanyByLoginName", {loginName: window.parent.loginName}, function (data) {
+
+        if(data.flag){
+            // layer.msg(data.msg,{icon:1,timeout:2000});
+            // data.data
+            $.post(ctx + "/companygarbage/companygarbage/statistic", {companyName: data.data.companyName}, function (data11) {
+                 //debugger
+                if(data11.flag){
+                    // layer.msg(data.msg,{icon:1,timeout:2000});
+                    // data.data
+
+                    for(let i = 0 ; i < data11.data.length ; i++){
+                        xarray1.push(data11.data[i].garbageName);
+                        yarray1.push(parseInt(data11.data[i].sumRweight));
+                    }
+                    renderEcharts();
+                    // debugger
+                    console.log(xarray1);
+                    console.log(yarray1);
+                }
+            });
+            $.post(ctx + "/companycommunityrweight/companycommunityrweight/findCompanyCommunityRweightsByCompanyName", {companyName: data.data.companyName}, function (data22) {
+                // debugger
+                if(data22.flag) {
+                    // layer.msg(data.msg,{icon:1,timeout:2000});
+                    // data.data
+
+                    for (let i = 0; i < data22.data.length; i++) {
+                        xarray2.push(data22.data[i].comName);
+                        yarray2.push(parseInt(data22.data[i].sumRweight));
+                        array2.push({value:parseInt(data22.data[i].sumRweight),name:data22.data[i].comName})
+                    }
+                    renderEcharts1();
+                    console.log(xarray2);
+                    console.log(yarray2);
+                    // debugger
+                }
+            });
+        }
+    });
+
+function renderEcharts() {
+
+    require(
+        ['echarts'],
+        function (echarts) {
+
+            var chart = echarts.init(document.getElementById('statistic1'));
+
+            var xAxisData = [];
+            var data1 = [];
+            var data2 = [];
+            var data3 = [];
+            var data4 = [];
+
+            for (var i = 0; i < 10; i++) {
+                xAxisData.push('类目' + i);
+                data1.push(i === 0 ? '-' : (Math.random() * 5).toFixed(2));
+                data2.push(-Math.random().toFixed(2));
+                data3.push((Math.random() + 0.5).toFixed(2));
+                data4.push((Math.random() + 0.3).toFixed(2));
+            }
+
+
+            chart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: xarray1,
+
+                        // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLabel: {
+                            inside: false,
+                            margin: 2,
+                            formatter: '{value}千克'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Direct',
+                        type: 'bar',
+                        barWidth: '50%',
+                        // data: [10, 52, 200, 334, 390, 330, 220]
+                        data: yarray1
+                    }
+                ]
+
+                //     itemStyle: itemStyle,
+                //     selectedMode: true,
+                //     cursor: 'default',
+                //     data: data2
+                // }, {
+                //     name: 'bar3',
+                //     type: 'bar',
+                //     stack: 'two',
+                //     itemStyle: itemStyle
+                //     selectedMode: true,
+                //     data: data3
+                // }, {
+                //     name: 'bar4',
+                //     type: 'bar',
+                //     stack: 'two',
+                //     itemStyle: itemStyle,
+                //     selectedMode: true,
+                //     data: data4
+                // }]
+            });
+
+            chart.on('click', function (params) {
+                console.log(params);
+            });
+
+            chart.on('legendselectchanged', function (params) {
+                chart.setOption({
+                    // title: {
+                    // },
+                    graphic: [{
+                        type: 'circle',
+                        shape: {
+                            cx: 100,
+                            cy: 100,
+                            r: 20,
+                        }
+                    }]
+                });
+            });
+
+            window.onresize = chart.resize;
+        }
+    );
+}
+    function renderEcharts1() {
+
+        require(
+            ['echarts'],
+            function (echarts) {
+
+                var chart = echarts.init(document.getElementById('statistic2'));
+
+                var xAxisData = [];
+                var data1 = [];
+                var data2 = [];
+                var data3 = [];
+                var data4 = [];
+
+                for (var i = 0; i < 10; i++) {
+                    xAxisData.push('类目' + i);
+                    data1.push(i === 0 ? '-' : (Math.random() * 5).toFixed(2));
+                    data2.push(-Math.random().toFixed(2));
+                    data3.push((Math.random() + 0.5).toFixed(2));
+                    data4.push((Math.random() + 0.3).toFixed(2));
+                }
+
+
+                chart.setOption({
+                    legend: {
+                        top: 'bottom'
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: { show: true },
+                            dataView: { show: true, readOnly: false },
+                            restore: { show: true },
+                            saveAsImage: { show: true }
+                        }
+                    },
+                    series: [
+                        {
+                            // name: 'Nightingale Chart',
+                            type: 'pie',
+                            radius: [40, 200],
+                            center: ['50%', '50%'],
+                            roseType: 'area',
+                            itemStyle: {
+                                borderRadius: 8
+                            },
+                            data: array2
+                        }
+                    ],
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                });
+
+                chart.on('click', function (params) {
+                    console.log(params);
+                });
+
+                chart.on('legendselectchanged', function (params) {
+                    chart.setOption({
+                        // title: {
+                        // },
+                        graphic: [{
+                            type: 'circle',
+                            shape: {
+                                cx: 100,
+                                cy: 100,
+                                r: 20,
+                            }
+                        }]
+                    });
+                });
+
+                window.onresize = chart.resize;
+            }
+        );
+    }
+</script>
+<!--<script th:src="@{/statistic/statistic/js/statistic.js}"></script>-->
+</html>

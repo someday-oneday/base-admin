@@ -30,6 +30,11 @@ public class UserController {
     @Autowired
     private SysShortcutMenuService sysShortcutMenuService;
 
+    @GetMapping("user")
+    public ModelAndView user(){
+        return new ModelAndView("user/user");
+    }
+
     @GetMapping("userinfo")
     public ModelAndView userinfo() {
         SysUserVo sysUserVo = sysUserService.findByLoginName(SecurityUtil.getLoginUser().getUsername()).getData();
